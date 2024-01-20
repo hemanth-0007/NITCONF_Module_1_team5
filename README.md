@@ -1,7 +1,7 @@
 # IEEE-Tempate
 IEEE System Requirements Specification Template
 
-# Software Requirements Specification
+# Software Requirements Specifications
 ## For  <project name>
 Version 1.0 approved
 Prepared by <author>
