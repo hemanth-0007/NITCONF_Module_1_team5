@@ -71,7 +71,11 @@ The major components of the overall system include the Author Module (Module 1),
 ### 2.2 Product Functions
 * User registration and login functionality for authors.
 * Submission of abstracts (papers in PDF format) by registered authors.
+* Author can add multiple abstracts at  max of 3 .
 * Deadline enforcement to restrict abstract submission after the specified date.
+* Users add tags to their abstract before submision
+* After submission, they can view status in a table of  dashboard page
+* Users can also view the comments posted by reviewers of their abstract.
 ### 2.3 User Classes and Characteristics
 1. Authors: Users who submit papers for evaluation.
     * Characteristics:
@@ -147,30 +151,34 @@ The NITCONF website requires specific communication functions to facilitate its 
 * Data Synchronization: Real-time synchronization for timely notifications.
 ## System Features
 The following features are made available to the users (authors).
-
 ### 4.1 Authentication
 * The user has the ability to create an account, and login with their credentials.
 * The user can request for a password reset, via the `forgot password` option, if required.
-
 ### 4.2 Dashboard
 The following features are available as part of the main dashboard presented to the user.
-
 #### 4.2.1 User Profile
 * The user can view / update their details in the profile section
-
-#### 4.2.2 Upload And View Submissions
+#### 4.2.2 Upload Abstracts
+* The user is supposed to upload their abstract in Portable Display Format(PDF).
+* Author can upload maximum of 3 abstracts
+#### 4.2.3 View Submissions
 * The user is provided with the current status of their latest submission, if any.
-* The user is then able to re-submit their abstract, with the changes suggested by reviewers.
-
-#### 4.2.3 Interaction With Reviewers
+#### 4.2.4 Comments by reviewers
 * The user is given a list of comments provided by the reviewer assigned.
-* The user is also provided with contact information of the reviewer
 * The comments are listed along with the version of the submission, the comment was targeted to.
-
-#### 4.2.4 Notification System
+#### 4.2.5 Notification System
 * The user is sent urgent notifications via Email in events such as a new comment, acceptance / rejection of a submission, etc.
-
-
+#### 4.2.6 Contact Us
+* User if he needs any assistance, can contact program committee.
+#### 4.2.7 Track status 
+* User can view
+    * Submitted abstracts
+    * Status ("Reviewing","changes needed","Submitted")
+    * Edit abstract
+    * Final Status from Program Committee("Approved","Rejected")
+    * Reviewers who are reviewing specific abstract
+    * Tags of the abstract 
+  
 ## Other Nonfunctional Requirements
 ### 5.1 Performance Requirements
 To ensure optimal system performance, the NITCONF Conference Website must meet the following requirements:
