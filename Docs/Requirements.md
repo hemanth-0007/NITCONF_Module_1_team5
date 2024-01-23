@@ -1,13 +1,7 @@
-# IEEE-Tempate
-IEEE System Requirements Specification Template
+
 
 # Software Requirements Specification
-## For  <project name>
-Version 1.0 approved
-Prepared by <author>
-<organization>
-<date created>
-
+## For NITCONF WEBSITE
 Table of Contents
 =================
   * [Revision History](#revision-history)
