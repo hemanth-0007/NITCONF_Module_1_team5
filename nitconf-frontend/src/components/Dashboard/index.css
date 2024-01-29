@@ -1,0 +1,24 @@
+.dashboard-container{
+    /* border: 2px solid black; */
+    height: 100vh;
+}
+
+.dashboard-menu{
+    margin: 20px;
+    list-style-type: none;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.pdf-image{
+    width: 100%;
+    height: 100%;
+}
+.heading {
+    font-size:28px;
+    font-style:italic;
+    font-weight: bold;
+    text-align:center;
+}
