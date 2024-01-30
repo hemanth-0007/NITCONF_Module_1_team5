@@ -29,7 +29,7 @@ class LoginForm extends Component {
       expires: 30,
       path: '/',
     })
-    history.replace('/')
+    history.replace('/');
   }
 
   onSubmitFailure = errorMsg => {
