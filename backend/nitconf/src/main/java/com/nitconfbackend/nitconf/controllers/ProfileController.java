@@ -23,14 +23,20 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 
-
+/**
+ * Controller class for managing user profile.
+*/
 @RestController
 @RequestMapping("/api/profile")
 public class ProfileController {
 
     @Autowired
     public UserRepository userRepo;
-
+    /**
+     * Retrieves details of the authenticated user's profile.
+     *
+     * @return ResponseEntity containing the user details.
+     */
     @GetMapping("")
     public ResponseEntity<User> profileDetails() {
         User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();

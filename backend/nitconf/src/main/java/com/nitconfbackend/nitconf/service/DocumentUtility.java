@@ -8,12 +8,28 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.nitconfbackend.nitconf.models.DocumentVersion;
-
+/**
+ * Service class for document-related utility methods.
+ */
 @Service
 public class DocumentUtility {
+    /**
+     * Converts a PDF file to a byte array.
+     *
+     * @param file The PDF file to be converted.
+     * @return Byte array representing the contents of the PDF file.
+     * @throws IllegalStateException If the file cannot be processed.
+     * @throws IOException           If an I/O exception occurs during file processing.
+     */
     public byte[] pdfToByte(MultipartFile file) throws IllegalStateException, IOException {
         return file.getBytes();
     }
+     /**
+     * Downloads the latest version of a document as a ByteArrayResource.
+     *
+     * @param allDocs List of document versions.
+     * @return ByteArrayResource representing the latest version of the document.
+     */
     public ByteArrayResource downloadFile(List<DocumentVersion> allDocs) {
         allDocs.sort((a, b) -> b.getVersion().compareTo(a.getVersion()));
         int len = allDocs.size();

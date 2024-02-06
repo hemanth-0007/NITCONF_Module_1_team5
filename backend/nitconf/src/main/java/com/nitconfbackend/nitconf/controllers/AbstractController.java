@@ -35,6 +35,9 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+/**
+ * Controller class for managing sessions and associated documents.
+ */
 @RestController
 @RequestMapping("/api/abstract")
 
@@ -54,6 +57,11 @@ public class AbstractController {
     @Autowired
     private TagsRepository tagsRepo;
 
+    /**
+     * Retrieves all sessions associated with the currently authenticated user.
+     *
+     * @return ResponseEntity containing a list of sessions.
+     */
 
     @GetMapping("")
     public ResponseEntity<List<Session>> getAllSessions() {
@@ -65,6 +73,12 @@ public class AbstractController {
         return ResponseEntity.ok(sessions);
     }
 
+    /**
+     * Creates a new session.
+     *
+     * @param entity The request body containing the details of the new session.
+     * @return ResponseEntity containing the newly created session.
+     */
     @PostMapping("")
     public ResponseEntity<Session> newSession(@RequestBody SessionRequest entity) {
         if (entity.title == null || entity.description == null 
@@ -107,6 +121,13 @@ public class AbstractController {
         return ResponseEntity.ok(session);
     }
 
+    /**
+     * Updates an existing session.
+     *
+     * @param id     The ID of the session to be updated.
+     * @param entity The request body containing the updated details of the session.
+     * @return ResponseEntity containing the updated session.
+     */
     @PutMapping("/{id}")
     public ResponseEntity<Session> updateSession(@PathVariable String id, @RequestBody SessionRequest entity) {
         if (id == null)
@@ -133,7 +154,13 @@ public class AbstractController {
         return ResponseEntity.ok(session);
     }
 
-
+    /**
+     * Deletes a session.
+     *
+     * @param id The ID of the session to be deleted.
+     * @return ResponseEntity containing a message indicating the success of the
+     *         operation.
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteSession(@PathVariable String id) {
         if (id == null)

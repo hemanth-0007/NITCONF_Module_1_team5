@@ -21,6 +21,11 @@ import java.util.List;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+/**
+ * Controller class for managing reviews.
+ */
+
+
 @RestController
 
 @RequestMapping("/api/review")
@@ -35,7 +40,13 @@ public class ReviewController{
     @Autowired
     private UserRepository userRepo;
 
-
+   /**
+     * Retrieves a list of reviews for a specific document.
+     *
+     * @param id The ID of the document.
+     * @return ResponseEntity containing the list of reviews for the specified document.
+     * @throws java.util.NoSuchElementException if the document with the given ID is not found.
+     */
     @GetMapping("/doc/{id}")
     public ResponseEntity<List<Review>> getMethodName(@PathVariable String id) {
         if (id == null)
@@ -43,7 +54,13 @@ public class ReviewController{
         DocumentVersion doc = documentRepo.findById(id).orElseThrow();
         return ResponseEntity.ok(doc.getReviews());
     }
-
+     /**
+     * Retrieves a specific review by its ID.
+     *
+     * @param id The ID of the review.
+     * @return ResponseEntity containing the requested review.
+     * @throws java.util.NoSuchElementException if the review with the given ID is not found.
+     */
     @GetMapping("/{id}")
     public ResponseEntity<Review> getReview(@PathVariable String id) {
         if (id == null)
@@ -51,6 +68,16 @@ public class ReviewController{
         Review review = reviewRepo.findById(id).orElseThrow();
         return ResponseEntity.ok(review);
     }
+
+     /**
+     * Creates a new review for a specific document.
+     *
+     * @param body The request body containing the review details.
+     * @param id   The ID of the document for which the review is created.
+     * @return ResponseEntity indicating the success or failure of the review creation.
+     * @throws java.util.NoSuchElementException if the document with the given ID is not found.
+     * @throws IllegalArgumentException        if the user does not have the required role for creating a review.
+     */
     
     @PostMapping("/{id}")
     public ResponseEntity<String> createReview(@RequestBody ReviewRequest body, @PathVariable String id) {

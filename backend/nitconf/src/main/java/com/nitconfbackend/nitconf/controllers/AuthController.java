@@ -20,7 +20,9 @@ import com.nitconfbackend.nitconf.types.RegisterRequest;
 
 import lombok.RequiredArgsConstructor;
 
-
+/**
+ * Controller class for managing user authentication.
+ */
 // @CrossOrigin(origins = "http://localhost:3004")
 @RestController
 @RequiredArgsConstructor
@@ -30,7 +32,13 @@ public class AuthController {
 
     @Autowired
     private UserRepository userRepo;
-
+    /**
+     * Registers a new user.
+     *
+     * @param user The user details to be registered.
+     * @return ResponseEntity containing the authentication response.
+     * @throws IllegalArgumentException if the provided user object is null or if any required fields are missing.
+     */
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> registerUser(@RequestBody RegisterRequest user) {
         if(user == null){
@@ -53,7 +61,13 @@ public class AuthController {
         return ResponseEntity.ok(service.register(user));
     }
 
-   
+    /**
+     * Logs in an existing user.
+     *
+     * @param user The user credentials for login.
+     * @return ResponseEntity containing the authentication response.
+     * @throws IllegalArgumentException if the provided user object is null or if any required fields are missing.
+     */
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> login(@RequestBody AuthenticationRequest user) {
         

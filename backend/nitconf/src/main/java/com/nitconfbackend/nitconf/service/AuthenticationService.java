@@ -22,6 +22,13 @@ import com.nitconfbackend.nitconf.types.RegisterRequest;
 
 import lombok.RequiredArgsConstructor;
 
+
+
+/**
+ * AuthenticationService
+ * Service class for managing user authentication.
+ * @since 1.0
+ */
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
@@ -31,6 +38,12 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
+    /**
+     * Registers a new user.
+     *
+     * @param request The registration request containing user details.
+     * @return AuthenticationResponse containing a JWT token and a message.
+     */
     public AuthenticationResponse register(RegisterRequest request) {
         var user = User.builder()
                 .firstName(request.getFirstName())
@@ -50,7 +63,12 @@ public class AuthenticationService {
         }
         return null;
     }
-
+     /**
+     * Performs user login.
+     *
+     * @param request The login request containing user credentials.
+     * @return AuthenticationResponse containing a JWT token and a message.
+     */
     public AuthenticationResponse login(AuthenticationRequest request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
