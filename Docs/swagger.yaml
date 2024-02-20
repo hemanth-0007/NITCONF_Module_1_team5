@@ -1,0 +1,507 @@
+openapi: 3.0.1
+info:
+  title: NITCONF API
+  description: The Author module API for the NITCONF website provides endpoints for authors to manage their paper submissions. Authors can submit abstracts for evaluation, check the status of their submissions, upload full papers upon acceptance, and retrieve information about accepted or rejected papers. Authentication is required for all endpoints, and responses include status codes indicating success or failure. Authors can interact with the API to track the progress of their submissions and access information about accepted and rejected papers, facilitating efficient communication and collaboration within the conference submission process.
+  version: v1
+servers:
+- url: http://localhost:8082
+  description: Local server
+paths:
+  /api/abstract/{id}:
+    get:
+      tags:
+      - abstract-controller
+      operationId: getSession
+      description: This endpoint is to get the abstract of a particular id
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Session'
+      security:
+      - bearerAuth: []
+    put:
+      tags:
+      - abstract-controller
+      operationId: updateSession
+      description: This endpoint is to update the abstract of a particular id
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SessionRequest'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Session'
+      security:
+      - bearerAuth: []
+    delete:
+      tags:
+      - abstract-controller
+      operationId: deleteSession
+      description: This endpoint is to delete the abstract of a particular id
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+      security:
+      - bearerAuth: []
+  /api/abstract/doc/{id}:
+    get:
+      tags:
+      - abstract-controller
+      operationId: getDocument
+      description: This endpoint is to get the document of a particular id related to the  abstract.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+                format: binary
+      security:
+      - bearerAuth: []
+    put:
+      tags:
+      - abstract-controller
+      description: This endpoint is to update the document of a particular id related to the  abstract.
+      operationId: uploadPdf
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+              - file
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+      - bearerAuth: []
+  /api/tags/newtag:
+    post:
+      tags:
+      - tagcontroller
+      operationId: newtag
+      description: This endpoint is to create and post a new tag.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TagRequest'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Tag'
+      security:
+      - bearerAuth: []
+  /api/review/{id}:
+    get:
+      tags:
+      - review-controller
+      operationId: getReview
+      description: This endpoint is to get the review or the comment of a particular id.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Review'
+      security:
+      - bearerAuth: []
+    post:
+      tags:
+      - review-controller
+      operationId: createReview
+      description: This endpoint is to post the review or the comment of a particular id. which may be created by reviewer module
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewRequest'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+      security:
+      - bearerAuth: []
+  /api/auth/register:
+    post:
+      tags:
+      - auth-controller
+      operationId: registerUser
+      description: This endpoint is used by the author to register in the website.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AuthenticationResponse'
+  /api/auth/login:
+    post:
+      tags:
+      - auth-controller
+      operationId: login
+      description: This endpoint is used by the author to login in the website.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthenticationRequest'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AuthenticationResponse'
+  /api/abstract:
+    get:
+      tags:
+      - abstract-controller
+      operationId: getAllSessions
+      description: This endpoint gets all the abstracts related to a particular user.
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Session'
+      security:
+      - bearerAuth: []
+    post:
+      tags:
+      - abstract-controller
+      operationId: newSession
+      description: This endpoint posts all the abstracts related to a particular user.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SessionRequest'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Session'
+      security:
+      - bearerAuth: []
+  /api/tags/{title}:
+    get:
+      tags:
+      - tagcontroller
+      operationId: FindSessions
+      description: This endpoint gets all the tags by the title.
+      parameters:
+      - name: title
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Session'
+      security:
+      - bearerAuth: []
+  /api/tags/findall:
+    get:
+      tags:
+      - tagcontroller
+      operationId: FindAll
+      description: This endpoint gets all the tags of a particular user.
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Tag'
+      security:
+      - bearerAuth: []
+  /api/review/doc/{id}:
+    get:
+      tags:
+      - review-controller
+      operationId: getMethodName
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Review'
+      security:
+      - bearerAuth: []
+  /api/profile:
+    get:
+      tags:
+      - profile-controller
+      operationId: profileDetails
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/User'
+      security:
+      - bearerAuth: []
+  /api/auth/test:
+    get:
+      tags:
+      - test-controller
+      operationId: test
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Tag'
+components:
+  schemas:
+    SessionRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+          enum:
+          - ACCEPTED
+          - PENDING
+          - REJECTED
+        tags:
+          type: array
+          items:
+            type: string
+    DocumentVersion:
+      required:
+      - version
+      type: object
+      properties:
+        id:
+          type: string
+        changesDesc:
+          type: string
+        version:
+          type: integer
+          format: int32
+        reviews:
+          type: array
+          items:
+            $ref: '#/components/schemas/Review'
+    GrantedAuthority:
+      type: object
+      properties:
+        authority:
+          type: string
+    Review:
+      type: object
+      properties:
+        id:
+          type: string
+        reviewer:
+          $ref: '#/components/schemas/User'
+        comment:
+          type: string
+    Abstract:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+          enum:
+          - ACCEPTED
+          - PENDING
+          - REJECTED
+        date:
+          type: string
+          format: date-time
+        documentVersions:
+          type: array
+          items:
+            $ref: '#/components/schemas/DocumentVersion'
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tag'
+    Tag:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+          enum:
+          - USER
+          - REVIEWER
+          - PROGRAM_COMMITTEE
+        isVerified:
+          type: boolean
+        authorities:
+          type: array
+          items:
+            $ref: '#/components/schemas/GrantedAuthority'
+    TagRequest:
+      type: object
+      properties:
+        title:
+          type: string
+    ReviewRequest:
+      type: object
+      properties:
+        comment:
+          type: string
+    RegisterRequest:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+    AuthenticationResponse:
+      type: object
+      properties:
+        token:
+          type: string
+        msg:
+          type: string
+    AuthenticationRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      description: JWT Token for Authentication
+      in: header
+      scheme: bearer
+      bearerFormat: JWT
