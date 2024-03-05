@@ -25,7 +25,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/Session'
+                $ref: '#/components/schemas/Abstract'
       security:
       - bearerAuth: []
     put:
@@ -51,7 +51,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/Session'
+                $ref: '#/components/schemas/Abstract'
       security:
       - bearerAuth: []
     delete:
@@ -247,7 +247,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Session'
+                  $ref: '#/components/schemas/Abstract'
       security:
       - bearerAuth: []
     post:
@@ -267,7 +267,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/Session'
+                $ref: '#/components/schemas/Abstract'
       security:
       - bearerAuth: []
   /api/tags/{title}:
@@ -290,7 +290,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Session'
+                  $ref: '#/components/schemas/Abstract'
       security:
       - bearerAuth: []
   /api/tags/findall:
@@ -502,6 +502,5 @@ components:
     bearerAuth:
       type: http
       description: JWT Token for Authentication
-      in: header
       scheme: bearer
       bearerFormat: JWT
