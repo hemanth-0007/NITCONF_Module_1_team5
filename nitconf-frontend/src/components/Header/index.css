@@ -194,3 +194,8 @@
     height: 75px;
     width: 75px;
   }
+
+  .active{
+    color: #0967d2;
+    /* text-decoration: underline; */
+  }

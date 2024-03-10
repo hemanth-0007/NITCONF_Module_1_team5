@@ -1,116 +1,104 @@
-import {Link, withRouter} from 'react-router-dom'
-
-import Cookies from 'js-cookie'
+import "./index.css";
+import {  withRouter } from "react-router-dom";
+import Cookies from "js-cookie";
 import { FcConferenceCall } from "react-icons/fc";
-import './index.css'
+import { Nav } from "react-bootstrap";
+import { NavLink } from "react-router-dom";
 
-const Header = props => {
+const Header = (props) => {
   const onClickLogout = () => {
-    const {history} = props
-    Cookies.remove('jwt_token')
-    history.replace('/login')
-  }
+    const { history } = props;
+    Cookies.remove("jwt_token");
+    const keysToRemove = ["sessionsList", "username", "tagsList"]; // Array of keys to remove in localStorage
+    keysToRemove.forEach((item) => localStorage.removeItem(item));
+    history.replace("/login");
+  };
+
 
   return (
-    <nav className="nav-header">
+    <Nav className="nav-header">
       <div className="nav-content">
-        <div className="nav-bar-mobile-logo-container">
-          <Link to="/">
-            <img
-              className="website-logo"
-              src="https://assets.ccbp.in/frontend/react-js/nxt-trendz-logo-img.png"
-              alt="website logo"
-            />
-          </Link>
-
-          <button type="button" className="nav-mobile-btn">
-            <img
-              src="https://assets.ccbp.in/frontend/react-js/nxt-trendz-log-out-img.png"
-              alt="nav logout"
-              className="nav-bar-image"
-              onClick={onClickLogout}
-            />
-          </button>
-        </div>
-
         <div className="nav-bar-large-container">
-          <Link to="/" className = "nav-link">
-            {/* <img
-              className="website-logo"
-              src="https://assets.ccbp.in/frontend/react-js/nxt-trendz-logo-img.png"
-              alt="website logo"
-            /> */}
-             <FcConferenceCall  className='icon'/>
-          </Link>
+          <Nav.Item>
+            <NavLink exact to="/" className="nav-link" activeClassName="active">
+              <FcConferenceCall className="icon" />
+            </NavLink>
+          </Nav.Item>
           <ul className="nav-menu">
-            <li className="nav-menu-item">
-              <Link to="/" className="nav-link">
+            <Nav.Item className="nav-menu-item">
+              <NavLink
+                exact
+                to="/"
+                className="nav-link"
+                activeClassName="active"
+              >
                 Home
-              </Link>
-            </li>
-
-            <li className="nav-menu-item">
-              <Link to="/dashboard" className="nav-link">
+              </NavLink>
+            </Nav.Item>
+            <Nav.Item className="nav-menu-item">
+              <NavLink
+                exact
+                to="/dashboard"
+                className="nav-link"
+                activeClassName="active"
+              >
                 Dashboard
-              </Link>
-            </li>
-
-            <li className="nav-menu-item">
-              <Link to="/view-status" className="nav-link">
+              </NavLink>
+            </Nav.Item>
+            <Nav.Item className="nav-menu-item">
+              <NavLink
+                exact
+                to="/view-status"
+                className="nav-link"
+                activeClassName="active"
+              >
                 View Status
-              </Link>
-            </li>
-            <li className="nav-menu-item">
-              <Link to="/upload-paper" className="nav-link">
-                Upload 
-              </Link>
-            </li>
-            <li className="nav-menu-item">
-              <Link to="/notification" className="nav-link">
+              </NavLink>
+            </Nav.Item>
+            <Nav.Item className="nav-menu-item">
+              <NavLink
+                exact
+                to="/upload-paper"
+                className="nav-link"
+                activeClassName="active"
+              >
+                Upload
+              </NavLink>
+            </Nav.Item>
+            <Nav.Item className="nav-menu-item">
+              <NavLink
+                exact
+                to="/notification"
+                className="nav-link"
+                activeClassName="active"
+              >
                 Notification
-              </Link>
-            </li>
-            <li className="nav-menu-item">
-                <button
-                    type="button"
-                    className="logout-desktop-btn"
-                    onClick={onClickLogout}
-                >
-                    Logout
-                </button>
-            </li>
+              </NavLink>
+            </Nav.Item>
+            <Nav.Item className="nav-menu-item">
+              <button
+                type="button"
+                className="logout-desktop-btn"
+                onClick={onClickLogout}
+              >
+                Logout
+              </button>
+            </Nav.Item>
+
+            {/* <li className="nav-menu-item">
+              <button
+                type="button"
+                className="logout-desktop-btn"
+                onClick={onClickLogout}
+              >
+                Logout
+              </button>
+            </li> */}
           </ul>
-          
         </div>
       </div>
+    </Nav>
+  );
+};
 
-
-      <div className="nav-menu-mobile">
-        <ul className="nav-menu-list-mobile">
-          <li className="nav-menu-item-mobile">
-            <Link to="/" className="nav-link">
-              <img
-                src="https://assets.ccbp.in/frontend/react-js/nxt-trendz-home-icon.png"
-                alt="nav home"
-                className="nav-bar-image"
-              />
-            </Link>
-          </li>
-
-          <li className="nav-menu-item-mobile">
-            <Link to="/products" className="nav-link">
-              <img
-                src="https://assets.ccbp.in/frontend/react-js/nxt-trendz-products-icon.png"
-                alt="nav products"
-                className="nav-bar-image"
-              />
-            </Link>
-          </li>
-          
-        </ul>
-      </div>
-    </nav>
-  )
-}
-
-export default withRouter(Header)
+export default withRouter(Header);

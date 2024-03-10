@@ -1,13 +1,12 @@
 import React, { useState } from "react";
 import "./index.css";
 
-const RegisterForm = (props) => {
+const Register = (props) => {
   const [formData, setFormData] = useState({
-    name: "",
-    username: "",
+    firstName: "",
+    lastName: "",
     email: "",
     password: "",
-    gender: "",
     confirmPassword: "",
     errorMsg: "",
     showSubmitError: false,
@@ -17,86 +16,90 @@ const RegisterForm = (props) => {
     const target = event.target;
     const value = target.value;
     const stateName = target.id;
-    setFormData(prevFormData => ({ ...prevFormData, [stateName]: value }));
+    setFormData((prevFormData) => ({ ...prevFormData, [stateName]: value }));
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    // TODO: handle form submission
-    const {name , email , password,gender, confirmPassword, username} = formData;
-    if (
-      name === "" ||
-      email === "" ||
-      password === "" ||
-      gender === "" ||
-      confirmPassword === "" ||
-      username === ""
-    ) {
-      setFormData({errorMsg: "Please enter all the details", showSubmitError: true});
-      return;
+    try {
+      const { firstName, lastName, email, password, confirmPassword } =
+        formData;
+      if (
+        firstName === "" ||
+        lastName === "" ||
+        email === "" ||
+        password === "" ||
+        confirmPassword === ""
+      ) {
+        setFormData({
+          errorMsg: "Please enter all the details",
+          showSubmitError: true,
+        });
+        return;
+      }
+
+      const userDetails = {
+        firstName,
+        lastName,
+        email,
+        password,
+      };
+      console.log(userDetails);
+      const url = "http://localhost:8082/api/auth/register";
+      const options = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json", // Set the Content-Type header to indicate JSON format
+        },
+        body: JSON.stringify(userDetails),
+      };
+      const response = await fetch(url, options);
+      console.log(response);
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        alert("Registered Successfully");
+        props.history.replace("/login");
+      } else alert("Unable to Register \n Please Try Again Later");
+    } catch (error) {
+      console.log("Error while Registering", error);
     }
-    const userDetails = {
-      name,
-      username,
-      gender,
-      email,
-      password,
-    };
-
-    // Handle the validations here
-
-
-    console.log(userDetails);
-    alert("Registered Successfully");
-    props.history.replace("/login");
   };
 
- 
-
+  const onClickLogin = () => {
+    props.history.replace("/login");
+  }
   return (
     <div className="register-form-container">
       <form className="form-container" onSubmit={handleSubmit}>
         <h1 className="register-main-heading">Registration</h1>
         <div className="input-container">
           <>
-            <label className="input-label" htmlFor="name">
-              FULL NAME
+            <label className="input-label" htmlFor="firstName">
+              FIRST NAME
             </label>
             <input
               type="text"
-              id="name"
+              id="firstName"
               className="username-input-field"
-              value={formData.name}
+              value={formData.firstName}
               onChange={handleInputChange}
-              placeholder="FULL NAME"
+              placeholder="FIRST NAME"
             />
           </>
           <>
-            <label className="input-label" htmlFor="username">
-              USERNAME
+            <label className="input-label" htmlFor="lastName">
+              LAST NAME
             </label>
             <input
               type="text"
-              id="username"
+              id="lastName"
               className="username-input-field"
-              value={formData.username}
+              value={formData.lastName}
               onChange={handleInputChange}
-              placeholder="USERNAME"
+              placeholder="LAST NAME"
             />
-          </>
-          {/* add the gender dropdown feild */}
-          <>
-            <label className="input-label">GENDER</label>
-            <select
-              value={formData.gender}
-              onChange={handleInputChange}
-              id="gender"
-              className="username-input-field"
-            >
-              <option value="">Select Gender</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-            </select>
           </>
           <>
             <label className="input-label" htmlFor="email">
@@ -108,7 +111,7 @@ const RegisterForm = (props) => {
               className="username-input-field"
               value={formData.email}
               onChange={handleInputChange}
-              placeholder="EMAL ID"
+              placeholder="EMAIL ID"
             />
           </>
           <>
@@ -139,12 +142,18 @@ const RegisterForm = (props) => {
           </>
         </div>
         <button type="submit" className="login-button">
-          REGISTER
+          {" "}
+          REGISTER{" "}
         </button>
-        {formData.showSubmitError && <p className="error-message">*{formData.errorMsg}</p>}
+        {formData.showSubmitError && (
+          <p className="error-message">*{formData.errorMsg}</p>
+        )}
+      <p className="footer-text">
+        Already Registered ? <span className="span-login" onClick={onClickLogin}>Login</span>
+      </p>
       </form>
     </div>
   );
 };
 
-export default RegisterForm;
+export default Register;

@@ -7,6 +7,9 @@
     background-color: #f9f9f9;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: auto;
+    /* border: 1px solid black; */
+
     /* display: flex;
     flex-direction: column;
     justify-content: center;
@@ -45,6 +48,8 @@
   .component-comments {
     margin-top: 20px;
     float: right;
+    /* border: 2px solid black; */
+
   }
   
   .component-comments h2 {
@@ -81,5 +86,14 @@
     padding: 0;
   }
   .component-comment-item{
+
+  }
+  .paper-view-btn-container{
+    /* display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center; */
+
+    /* border: 1px solid black; */
 
   }

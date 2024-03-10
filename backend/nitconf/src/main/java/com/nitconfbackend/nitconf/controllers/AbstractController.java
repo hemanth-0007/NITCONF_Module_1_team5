@@ -29,18 +29,17 @@ import com.nitconfbackend.nitconf.repositories.UserRepository;
 import com.nitconfbackend.nitconf.service.DocumentUtility;
 import com.nitconfbackend.nitconf.types.SessionRequest;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-/**
- * Controller class for managing sessions and associated documents.
- */
 @RestController
 @RequestMapping("/api/abstract")
-
+@SecurityRequirement(name = "bearerAuth")
 public class AbstractController {
     @Autowired
     private UserRepository userRepo;
@@ -48,21 +47,16 @@ public class AbstractController {
     @Autowired
     private SessionRepository sessionRepo;
 
-    // @Autowired
-    // private DocumentVersionRepository docRepo;
+    @Autowired
+    private DocumentVersionRepository docRepo;
 
-    // @Autowired
-    // private DocumentUtility documentUtility;
+    @Autowired
+    private DocumentUtility documentUtility;
 
     @Autowired
     private TagsRepository tagsRepo;
 
-    /**
-     * Retrieves all sessions associated with the currently authenticated user.
-     *
-     * @return ResponseEntity containing a list of sessions.
-     */
-
+  
     @GetMapping("")
     public ResponseEntity<List<Session>> getAllSessions() {
 
@@ -73,12 +67,6 @@ public class AbstractController {
         return ResponseEntity.ok(sessions);
     }
 
-    /**
-     * Creates a new session.
-     *
-     * @param entity The request body containing the details of the new session.
-     * @return ResponseEntity containing the newly created session.
-     */
     @PostMapping("")
     public ResponseEntity<Session> newSession(@RequestBody SessionRequest entity) {
         if (entity.title == null || entity.description == null 
@@ -92,7 +80,7 @@ public class AbstractController {
         entity.tags.forEach(tag -> {
             System.out.println("Tag: " + tag);
             if (tag != null) {
-                Tag newTag = tagsRepo.findByTitle(tag.toString()).orElseThrow();
+                Tag newTag = tagsRepo.findByTitle(tag).orElseThrow();
                 tags.add(newTag);
             }
         });
@@ -120,19 +108,13 @@ public class AbstractController {
 
         return ResponseEntity.ok(session);
     }
-
-    /**
-     * Updates an existing session.
-     *
-     * @param id     The ID of the session to be updated.
-     * @param entity The request body containing the updated details of the session.
-     * @return ResponseEntity containing the updated session.
-     */
+  
     @PutMapping("/{id}")
     public ResponseEntity<Session> updateSession(@PathVariable String id, @RequestBody SessionRequest entity) {
         if (id == null)
             return ResponseEntity.notFound().build();
-        if (entity.title == null || entity.description == null  || entity.status == null || entity.tags == null)          
+        if (entity.title == null || entity.description == null  
+                || entity.status == null || entity.tags == null)
             return ResponseEntity.badRequest().build();
         Session session = sessionRepo.findById(id).orElseThrow();
 
@@ -146,6 +128,7 @@ public class AbstractController {
 
         session.setTitle(entity.title);
         session.setDescription(entity.description);
+        
         session.setStatus(entity.status);
         session.setTags(tags);
 
@@ -154,24 +137,97 @@ public class AbstractController {
         return ResponseEntity.ok(session);
     }
 
-    /**
-     * Deletes a session.
-     *
-     * @param id The ID of the session to be deleted.
-     * @return ResponseEntity containing a message indicating the success of the
-     *         operation.
-     */
+  
+    @PutMapping("/doc/{id}")
+    public ResponseEntity<?> uploadPdf(@PathVariable String id, @RequestParam("file") MultipartFile file) {
+        if (id == null)
+            return ResponseEntity.notFound().build();
+        Session session = sessionRepo.findById(id).orElseThrow();
+        try {
+            byte[] data = documentUtility.pdfToByte(file);
+            List<DocumentVersion> allDocs = session.getDocumentVersions();
+            if (data == null)
+                return ResponseEntity.notFound().build();
+            DocumentVersion newDoc = new DocumentVersion(
+                    "New Submission",
+                    data,
+                    allDocs.size() + 1
+            // session
+            );
+            docRepo.save(newDoc);
+            session.getDocumentVersions().add(newDoc);
+            sessionRepo.save(session);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            return ResponseEntity.badRequest().build();
+        }
+
+        return ResponseEntity.ok().build();
+    }
+
+ 
+    @GetMapping("/doc/{id}")
+    public ResponseEntity<Resource> getDocument(@PathVariable String id) {
+        if (id == null)
+            return ResponseEntity.notFound().build();
+        Session session = sessionRepo.findById(id).orElseThrow();
+        List<DocumentVersion> allDocs = session.getDocumentVersions();
+        ByteArrayResource resource = documentUtility.downloadFile(allDocs);
+        if (resource == null)
+            return ResponseEntity.notFound().build();
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename= " + id + ".pdf")
+                .contentType(MediaType.APPLICATION_PDF)
+                .contentLength(resource.contentLength())
+                .body(resource);
+    }
+
+ 
+    @GetMapping("/{id}")
+    public ResponseEntity<Session> getSession(@PathVariable String id) {
+        if (id == null)
+            return ResponseEntity.notFound().build();
+        Session session = sessionRepo.findById(id).orElseThrow();
+        return ResponseEntity.ok(session);
+    }
+
+  
+    @PutMapping("/status/accepted/{id}")
+    public ResponseEntity<String> updateStatusToAccepted(@PathVariable String id) {
+        if (id == null)
+            return ResponseEntity.notFound().build();
+        Session session = sessionRepo.findById(id).orElseThrow();
+        session.setStatus(Status.ACCEPTED);
+        return ResponseEntity.ok("UPDATED STATUS TO ACCEPTED");
+    }
+
+   
+    @PutMapping("/status/rejected/{id}")
+    public ResponseEntity<String> updateStatusToRejected(@PathVariable String id) {
+        if (id == null)
+            return ResponseEntity.notFound().build();
+        Session session = sessionRepo.findById(id).orElseThrow();
+        session.setStatus(Status.REJECTED);
+        return ResponseEntity.ok("UPDATED STATUS TO REJECTED");
+    }
+
+
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteSession(@PathVariable String id) {
-        if (id == null){
-            System.out.println("id is null");
+        if (id == null)
             return ResponseEntity.notFound().build();
-        }
         Session session = sessionRepo.findById(id).orElseThrow();
-        if (session != null)
+        if (session != null){
             sessionRepo.delete(session);
+            List<DocumentVersion> allDocs = session.getDocumentVersions();
+            if(allDocs != null && !allDocs.isEmpty())
+                allDocs.forEach(doc -> {
+                    if (doc != null)
+                        docRepo.delete(doc);
+                });
+        }
+        
         return ResponseEntity.ok("DELETED SESSION");
     }
 
 }
-// New session created to be added to user sessions

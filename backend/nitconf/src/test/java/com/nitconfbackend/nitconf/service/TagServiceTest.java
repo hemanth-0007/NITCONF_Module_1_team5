@@ -25,12 +25,24 @@ public class TagServiceTest {
 
 	@Test
 	void testCreateNewTag() {
-
+		Tag Tag = new Tag("AI");
+		// When
+		given(tagsrepo.save(Tag)).willReturn(Tag);
+		var savedTag = tagService.CreateNewTag(Tag.title);
+		// Then
+		assertThat(savedTag).isNotNull();
+		assertThat(savedTag.getTitle()).isEqualTo("AI");
 	}
 
 	@Test
 	void testFindSessions() {
-
+		Tag Tag = new Tag("AI");
+		// When
+		given(tagsrepo.findByTitle("AI")).willReturn(java.util.Optional.of(Tag));
+		var relatedSessions = tagService.findSessions("AI");
+		// Then
+		assertThat(relatedSessions).isNotNull();
+		assertThat(relatedSessions.size()).isEqualTo(0);
 	}
 
 	@Test

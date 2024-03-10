@@ -8,6 +8,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.nitconfbackend.nitconf.models.DocumentVersion;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -50,7 +52,7 @@ public class Session {
      * List of document versions associated with the session.
      */
     @DBRef
-    public List<Document> documentVersions;
+    public List<DocumentVersion> documentVersions;
 
      /**
      * Session Constructor
