@@ -163,8 +163,10 @@ public class AbstractController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteSession(@PathVariable String id) {
-        if (id == null)
+        if (id == null){
+            System.out.println("id is null");
             return ResponseEntity.notFound().build();
+        }
         Session session = sessionRepo.findById(id).orElseThrow();
         if (session != null)
             sessionRepo.delete(session);
