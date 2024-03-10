@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequestMapping("/api/tags")
+
 @SecurityRequirement(name = "bearerAuth")
 public class TagController {
 
