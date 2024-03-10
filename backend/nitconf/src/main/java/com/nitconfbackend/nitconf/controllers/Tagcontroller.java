@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  */
 @RestController
 @RequestMapping("/api/tags")
-public class TagController {
+public class Tagcontroller {
 
     @Autowired
     private TagService tagService;
