@@ -51,4 +51,20 @@
   line-height: 16px;
   font-weight: 400;
 }
-  
+
+.footer-text{
+  font-family: 'Roboto';
+  font-size: 17px;
+  line-height: 16px;
+  color: #64748b;
+  margin-top: 10px;
+  margin-bottom: 0px;
+  border: none;
+  outline: none;
+  text-align: center;
+}
+.span-login{
+  font-weight: bold;
+  cursor: pointer;
+  color: black;
+}

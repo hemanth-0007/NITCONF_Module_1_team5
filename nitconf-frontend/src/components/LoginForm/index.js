@@ -1,61 +1,81 @@
-import {Component} from 'react'
-import Cookies from 'js-cookie'
-import {Redirect} from 'react-router-dom'
+import "./index.css";
+import { useState } from "react";
+import Cookies from "js-cookie";
+import { Redirect } from "react-router-dom";
 
-import './index.css'
 
-class LoginForm extends Component {
-  state = {
-    username: '',
-    password: '',
+const LoginForm = (props) => {
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
     showSubmitError: false,
-    errorMsg: '',
-    isAdmin: false
+    errorMsg: "",
+  });
+
+  const handleInputChange = (event) => {
+    const target = event.target;
+    const value = target.value;
+    const stateName = target.id;
+    setFormData((prevFormData) => ({ ...prevFormData, [stateName]: value }));
+  };
+
+  const onSubmitFailure = (errorMsg) => {
+    alert("Login Failed");
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      showSubmitError: true,
+      errorMsg,
+    }));
   }
 
-  onChangeUsername = event => {
-    this.setState({username: event.target.value})
-  }
-
-  onChangePassword = event => {
-    this.setState({password: event.target.value})
-  }
-
-  onSubmitSuccess = jwtToken => {
-  
-    const {history} = this.props
-
-    Cookies.set('jwt_token', jwtToken, {
+  const onSubmitSuccess = (jwtToken) => {
+    const { history } = props;
+    alert("Login Success");
+    Cookies.set("jwt_token", jwtToken, {
       expires: 30,
-      path: '/',
-    })
-    history.replace('/');
-  }
+      path: "/",
+    });
+    history.replace("/");
+  };
 
-  onSubmitFailure = errorMsg => {
-    this.setState({showSubmitError: true, errorMsg})
-  }
-
-  submitForm = async event => {
-    event.preventDefault()
-    const {username, password} = this.state
-    const userDetails = {username, password}
-    const url = 'https://apis.ccbp.in/login'
-    const options = {
-      method: 'POST',
-      body: JSON.stringify(userDetails),
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    try {
+      const { email, password } = formData;
+      const userDetails = { email, password };
+      console.log(userDetails);
+      const url = "http://localhost:8082/api/auth/login";
+      const options = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json", // Set the Content-Type header to indicate JSON format
+        },
+        body: JSON.stringify(userDetails),
+      };
+      const response = await fetch(url, options);
+      console.log(response);
+      if (response.ok === true){
+        const data = await response.json();
+        console.log(data);
+        const {token} = data;
+        console.log(token);
+        onSubmitSuccess(token);
+      }
+      else {
+        onSubmitFailure("Invalid Username or Password error occurred");
+      }
+    } catch (error) {
+      console.log("Error while Logging in", error);
     }
-    const response = await fetch(url, options)
-    const data = await response.json()
-    if (response.ok === true) {
-      this.onSubmitSuccess(data.jwt_token)
-    } else {
-      this.onSubmitFailure(data.error_msg)
-    }
-  }
+  };
 
-  renderPasswordField = () => {
-    const {password} = this.state
+  const onClickRegister = () => {
+    const { history } = props;
+    history.push("/register");
+  };
+
+  const renderPasswordField = () => {
+    const { password } = formData;
     return (
       <>
         <label className="input-label" htmlFor="password">
@@ -66,82 +86,65 @@ class LoginForm extends Component {
           id="password"
           className="password-input-field"
           value={password}
-          onChange={this.onChangePassword}
+          onChange={handleInputChange}
           placeholder="Password"
         />
       </>
-    )
-  }
+    );
+  };
 
-  renderUsernameField = () => {
-    const {username} = this.state
+  const renderUsernameField = () => {
+    const { email } = formData;
     return (
       <>
-        <label className="input-label" htmlFor="username">
-          USERNAME
+        <label className="input-label" htmlFor="email">
+          EMAIL
         </label>
         <input
           type="text"
-          id="username"
+          id="email"
           className="username-input-field"
-          value={username}
-          onChange={this.onChangeUsername}
+          value={email}
+          onChange={handleInputChange}
           placeholder="Username"
         />
       </>
-    )
-  }
+    );
+  };
 
-  onClickRegister = () => {
-    const {history} = this.props;
-    history.replace('/register');
-  }
 
-  onClickAdminLogin = ()  => {
-    this.setState({ isAdmin: true });
-    const {history} = this.props;
-    history.replace('/admin');
-  }
 
-  render() {
-    const {showSubmitError, errorMsg, isAdmin} = this.state
-    
-    return (
-      <div className="login-form-container">
-        {/* <img
-          src="https://assets.ccbp.in/frontend/react-js/nxt-trendz-logo-img.png"
-          className="login-website-logo-mobile-image"
-          alt="website logo"
-        /> */}
+
+  const jwtToken = Cookies.get("jwt_token");
+  if (jwtToken !== undefined) return <Redirect to="/" />;
+  const { showSubmitError, errorMsg } = formData;
+  return (
+    <div className="login-form-container">
         <img
           src="https://res.cloudinary.com/drvnhpatd/image/upload/v1705997469/Ecological_press_conference_member_speaking_on_stage_w7bnit.jpg"
           className="login-image"
           alt="website login"
         />
-       
-        <form className="form-container" onSubmit={this.submitForm}>
-        {/* <h2>Admin Login</h2> */}
-          {/* <img
-            src="https://assets.ccbp.in/frontend/react-js/nxt-trendz-logo-img.png"
-            className="login-website-logo-desktop-image"
-            alt="website logo"
-          /> */}
+        <form className="form-container" onSubmit={handleSubmit}>
           <h1 className="login-heading">Author Login</h1>
-            
-          <div className="input-container">{this.renderUsernameField()}</div>
-          <div className="input-container">{this.renderPasswordField()}</div>
+          <div className="input-container">{renderUsernameField()}</div>
+          <div className="input-container">{renderPasswordField()}</div>
           <button type="submit" className="login-button">
             Login
           </button>
           {showSubmitError && <p className="error-message">*{errorMsg}</p>}
-           <p className='register'>New User ?   <span  onClick={this.onClickRegister} className='register register-new'> Register Here </span></p>
-           {/* <p className='register register-new' onClick={this.onClickAdminLogin}>Admin</p> */}
-          {/* <p onClick={this.onClickRegister} className='register'>Admin?</p> */}
+          <p className="register">
+            New User ?{" "}
+            <span
+              onClick={onClickRegister}
+              className="register register-new"
+            >
+              Register Here
+            </span>
+          </p>
         </form>
       </div>
-    )
-  }
-}
+  );
+};
 
-export default LoginForm
-
+export default LoginForm;

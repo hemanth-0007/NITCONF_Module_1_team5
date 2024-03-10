@@ -3,11 +3,12 @@
 }
 
 .card {
-    width: 300px;
+    width: 250px;
+    height: auto;
     background-color: #fff;
-    border-radius: 8px;
+    border-radius: 12px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease;
+    transition: transform 0.2s ease;
     overflow: hidden;
     text-decoration: none;
     cursor: pointer;
@@ -25,7 +26,12 @@
   }
   
   .card-content {
-    padding: 20px;
+    /* padding: 20px; */
+    /* text-align: center; */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
   
   .card-title {
@@ -42,4 +48,13 @@
   }
   .dashboard-item{
     text-decoration: none;
+    /* border: 2px solid #000000; */
+    width: 300px;
+    height: 300px;
+    margin: 10px;
+  }
+
+  .dashboard-card-delete-btn{
+    height: 20px;
+    width: auto;
   }

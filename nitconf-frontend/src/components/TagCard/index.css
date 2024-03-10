@@ -1,0 +1,23 @@
+.tag-card-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+
+    background-color: rgb(178, 190, 210);
+    border-radius: 7px;
+    padding: 3px;
+    margin-left: 5px;
+}
+.tag-card-title{
+    /* border: 2px solid #000; */
+
+}
+.tag-card-delete-icon{
+    /* border: 2px solid #000; */
+
+    height: 15px;
+    width: 30px;
+    cursor: pointer;
+
+}
