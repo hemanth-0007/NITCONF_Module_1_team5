@@ -5,15 +5,15 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.support.RequestHandledEvent;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+
+
 @SpringBootApplication
 public class NitconfApplication {
-
-	public static void main(String[] args) {
-		SpringApplication.run(NitconfApplication.class, args);
-	}
 
 	@Bean
 	public WebMvcConfigurer corsConfigurer() {
@@ -24,5 +24,10 @@ public class NitconfApplication {
 
 			};
 		};
+	}
+
+
+	public static void main(String[] args) {
+		SpringApplication.run(NitconfApplication.class, args);
 	}
 }
