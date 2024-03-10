@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RestController
 @RequestMapping("/api/tags")
 @SecurityRequirement(name = "bearerAuth")
-public class Tagcontroller {
+public class TagController {
 
     @Autowired
     private TagService tagService;
