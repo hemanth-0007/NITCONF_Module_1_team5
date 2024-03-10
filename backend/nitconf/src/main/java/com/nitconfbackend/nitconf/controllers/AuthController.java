@@ -51,9 +51,10 @@ public class AuthController {
 
         if (user.getFirstName() == null || user.getLastName() == null || user.getEmail() == null || user.getPassword() == null )
             return ResponseEntity.badRequest().build();
-        Optional<User> userExists = userRepo.findByEmail(user.getEmail());
+        String email = user.getEmail();
+        Optional<User> userExists = userRepo.findByEmail(email);
         if (userExists.isPresent()){
-            String errorMessage = "User with email " + user.getEmail() + " already exists";
+            String errorMessage = "User with email " + email + " already exists";
             System.out.println(errorMessage);
             AuthenticationResponse response = AuthenticationResponse.builder().msg(errorMessage).build();
             return ResponseEntity.badRequest().body(response);
