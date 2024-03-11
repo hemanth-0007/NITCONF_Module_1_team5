@@ -24,14 +24,14 @@ const Home = () => {
 
   useEffect(() => {
     const getUsername = async () => {
-      const localStorageUsername = localStorage.getItem("username");
-      if (localStorageUsername !== null) {
-        setApiResponse({
-          apiResponseStatus: apiResponseStatusConstants.sucess,
-          username: localStorageUsername,
-        });
-        return;
-      }
+      // const localStorageUsername = localStorage.getItem("username");
+      // if (localStorageUsername !== null) {
+      //   setApiResponse({
+      //     apiResponseStatus: apiResponseStatusConstants.sucess,
+      //     username: localStorageUsername,
+      //   });
+      //   return;
+      // }
       setApiResponse(prevApiResponse => ({
         ...prevApiResponse,
         apiResponseStatus: apiResponseStatusConstants.intial

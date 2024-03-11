@@ -44,15 +44,15 @@ const UploadAbstract = () => {
   // useEffect hook to fetch tags list from backend
   useEffect(() => {
     const getTagsList = async () => {
-      const localStorageTagsList = JSON.parse(localStorage.getItem("tagsList"));
-      if (localStorageTagsList !== null) {
-        setTagsList(localStorageTagsList);
-        setFormData((prevFormData) => ({
-          ...prevFormData,
-          selectedTag: localStorageTagsList[0].title,
-        }));
-        return;
-      }
+      // const localStorageTagsList = JSON.parse(localStorage.getItem("tagsList"));
+      // if (localStorageTagsList !== null) {
+      //   setTagsList(localStorageTagsList);
+      //   setFormData((prevFormData) => ({
+      //     ...prevFormData,
+      //     selectedTag: localStorageTagsList[0].title,
+      //   }));
+      //   return;
+      // }
       const jwtToken = Cookies.get("jwt_token");
       const url = "http://localhost:8082/api/tags/findall";
       const options = {

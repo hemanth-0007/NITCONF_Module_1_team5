@@ -39,7 +39,7 @@ public class TagServiceTest {
 		Tag Tag = new Tag("AI");
 		// When
 		given(tagsrepo.findByTitle("AI")).willReturn(java.util.Optional.of(Tag));
-		var relatedSessions = tagService.findSessions("AI");
+		var relatedSessions = tagService.findSessionByTitle("AI");
 		// Then
 		assertThat(relatedSessions).isNotNull();
 		assertThat(relatedSessions.size()).isEqualTo(0);

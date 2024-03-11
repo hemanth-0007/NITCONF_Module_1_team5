@@ -11,8 +11,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.nitconfbackend.nitconf.models.Session;
 import com.nitconfbackend.nitconf.models.Tag;
+import com.nitconfbackend.nitconf.repositories.TagsRepository;
 import com.nitconfbackend.nitconf.service.TagService;
 import com.nitconfbackend.nitconf.types.TagRequest;
+
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tags;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,10 +26,14 @@ import org.springframework.web.bind.annotation.RequestBody;
  */
 @RestController
 @RequestMapping("/api/tags")
+@SecurityRequirement(name = "bearerAuth")
 public class Tagcontroller {
 
     @Autowired
     private TagService tagService;
+
+    @Autowired
+    private TagsRepository repository;
 
      /**
      * Retrieves sessions associated with a specific tag title.
@@ -33,10 +41,16 @@ public class Tagcontroller {
      * @param title The title of the tag to search for.
      * @return ResponseEntity containing a list of sessions related to the specified tag.
      */
-    @GetMapping("/{title}")
-    public ResponseEntity<List<Session>> FindSessions(@PathVariable String title) {
-        return ResponseEntity.ok(tagService.findSessions(title));
+    @GetMapping("/{id}")
+    public ResponseEntity<List<Session>> FindSessions(@PathVariable String id) {
+        if (id == null)
+            return ResponseEntity.badRequest().build();
+        Tag tag = repository.findById(id).orElseThrow();
+        List<Session> relatedSessions = tag.getSessions();
+
+        return ResponseEntity.ok(relatedSessions);
     }
+
 
      /**
      * Retrieves all tags.

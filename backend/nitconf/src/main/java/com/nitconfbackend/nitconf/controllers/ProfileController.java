@@ -15,6 +15,8 @@ import com.nitconfbackend.nitconf.models.User;
 import com.nitconfbackend.nitconf.repositories.UserRepository;
 import com.nitconfbackend.nitconf.types.ProfileRequest;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -28,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 */
 @RestController
 @RequestMapping("/api/profile")
+@SecurityRequirement(name = "bearerAuth")
 public class ProfileController {
 
     @Autowired
