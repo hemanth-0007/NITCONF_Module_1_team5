@@ -1,5 +1,6 @@
 package com.nitconfbackend.nitconf.models;
 
+import java.util.*;
 import java.util.Collection;
 import java.util.List;
 
@@ -62,6 +63,7 @@ public class User implements UserDetails {
     @DBRef
     public List<Session> sessions;
 
+     
     /**
      * Get the authorities (roles) assigned to the user.
      * @return Collection of GrantedAuthority.

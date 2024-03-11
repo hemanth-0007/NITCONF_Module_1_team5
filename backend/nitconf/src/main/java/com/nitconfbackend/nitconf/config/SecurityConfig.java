@@ -25,7 +25,16 @@ public class SecurityConfig {
         http
                 .csrf(res -> res.disable())
                 .authorizeHttpRequests(
-                        res -> res.requestMatchers("/api/auth/**", "/api/session/doc/**", "/api/email/**")
+                        res -> res.requestMatchers("/api/auth/**", 
+                                                    "/api/tags/newtag",
+                                                    "/swagger-ui/**", 
+                                                    "/swagger-ui.html",
+                                                     "/api/session/doc/**",
+                                                     "/api/auth" ,
+                                                     "/v3/api-docs/**",
+                                                     "/v3/**",
+                                                     "/v3/api-docs",
+                                                     "/api/email/**")
                                 .permitAll().anyRequest().authenticated())
                 // .authorizeHttpRequests(res -> res.anyRequest().permitAll())
                 .sessionManagement(res -> res.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

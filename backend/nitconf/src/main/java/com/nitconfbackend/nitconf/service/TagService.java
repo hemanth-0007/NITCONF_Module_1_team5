@@ -50,9 +50,18 @@ public class TagService {
      * @return List of sessions related to the specified tag.
      * @throws RuntimeException if the tag with the given title is not found.
      */
-    public List<Session> findSessions(String title) {
-        Tag tag = tagsRepository.findByTitle(title).orElseThrow();
-        List<Session> relatedSessions = tag.getSessions();
-        return relatedSessions;
+    public List<Session> findSessions(String id) {
+        Tag tag = tagsRepository.findById(id).orElseThrow(() -> new RuntimeException("Tag not found"));
+        System.out.println("The sessions are : " + tag.getSessions());
+        List<Session> sessions = tag.getSessions();
+        System.out.println(sessions.size());
+        return sessions;
+    }
+
+    public List<Session> findSessionByTitle(String title) {
+        Tag tag = tagsRepository.findByTitle(title).orElseThrow(() -> new RuntimeException("Tag not found"));
+        List<Session> sessions = tag.getSessions();
+        System.out.println(sessions.size());
+        return sessions;
     }
 }

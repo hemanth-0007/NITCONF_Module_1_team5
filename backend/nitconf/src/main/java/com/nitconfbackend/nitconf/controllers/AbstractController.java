@@ -99,8 +99,8 @@ public class AbstractController {
         sessionRepo.save(session);
 
         currentUser.getSessions().add(session);
+        System.out.println("Current user sessions: " + currentUser.getSessions());
         userRepo.save(currentUser);
-
         tags.forEach(tag -> {
             tag.getSessions().add(session);
             tagsRepo.save(tag);
