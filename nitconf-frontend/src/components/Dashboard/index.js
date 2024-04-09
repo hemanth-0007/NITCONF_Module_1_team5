@@ -71,14 +71,15 @@ const Dashboard = () => {
         const data = await response.json();
         console.log("The sessions data object :",data);
         console.log(data);
-        localStorage.setItem("sessionsList", JSON.stringify(data));
+        // localStorage.setItem("sessionsList", JSON.stringify(data));
         setApiResponse({
           apiResponseStatus: apiResponseStatusConstants.success,
           sessionsList: data,
         });
         alert("Papers fetched successfully");
         return;
-      } else {
+      } 
+      else {
         alert("Error in fetching the papers");
         setApiResponse({
           apiResponseStatus: apiResponseStatusConstants.failure,
@@ -86,7 +87,8 @@ const Dashboard = () => {
         });
         return;
       }
-    } catch (error) {
+    } 
+    catch (error) {
       console.log(`The error is : ${error.message}`);
       setApiResponse({
         apiResponseStatus: apiResponseStatusConstants.failure,
@@ -116,7 +118,8 @@ const Dashboard = () => {
         return;
       } else {
         alert("Error in deleting the paper");
-        return;
+        // return promise reject
+        return Promise.reject(new Error("Error in deleting the paper"));
       }
     } catch (error) {
       console.log(`The error is : ${error.message}`);
@@ -125,16 +128,19 @@ const Dashboard = () => {
 
 
   const onDeleteSession = async (id) => {
-    const { sessionsList } = apiResponse;
-    const updatedSessionsList = sessionsList.filter((item) => item.id !== id);
-    localStorage.setItem("sessionsList", JSON.stringify(updatedSessionsList));
-    await deletePaper(id);
-    setApiResponse( prevApiResponse => ({
-      ...prevApiResponse,
-      sessionsList: updatedSessionsList,
-    }));
-    // history.push("/dashboard");
-    console.log("Deleted successfully : ", id);
+    try {
+      await deletePaper(id);
+      const { sessionsList } = apiResponse;
+      const updatedSessionsList = sessionsList.filter((item) => item.id !== id);
+      setApiResponse( prevApiResponse => ({
+        ...prevApiResponse,
+        sessionsList: updatedSessionsList,
+      }));
+      console.log("Paper Deleted successfully : ", id);
+  } 
+  catch (error) {
+      console.log(`The error in deleting the paper : ${error.message}`);
+  }
   }
 
   const renderDashboardLoadingView = () => (

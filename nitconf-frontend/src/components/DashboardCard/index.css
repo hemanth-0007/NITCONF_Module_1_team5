@@ -41,6 +41,10 @@
     color: black;
     text-align: center;
   }
+
+  .card-title:hover {
+    text-decoration: underline;
+  }
   
   .card-description {
     font-size: 1rem;
@@ -56,5 +60,7 @@
 
   .dashboard-card-delete-btn{
     height: 20px;
-    width: auto;
+    width: auto; 
+    margin: 5px;
+    /* border: 2px solid black; */
   }

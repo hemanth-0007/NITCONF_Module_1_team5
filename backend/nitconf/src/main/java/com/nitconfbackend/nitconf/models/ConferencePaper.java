@@ -8,7 +8,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import com.nitconfbackend.nitconf.models.DocumentVersion;
 
 
 import lombok.AllArgsConstructor;
@@ -26,7 +25,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Document(collection="sessions")
-public class Session {
+public class ConferencePaper {
      /**
      * Unique identifier for the session.
      */
@@ -65,7 +64,7 @@ public class Session {
      * @param status      Status of the session.
      * @param tags        List of tags associated with the session.
      */
-    public Session(String title, String description, Status status, List<Tag> tags) {
+    public ConferencePaper(String title, String description, Status status, List<Tag> tags) {
         this.title = title;
         this.description = description;
         this.date = new Date();

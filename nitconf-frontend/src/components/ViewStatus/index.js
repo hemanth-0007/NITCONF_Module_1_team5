@@ -11,20 +11,16 @@ import ViewApiFailureView from '../ViewApiFailureView';
 
 const ViewStatus = () => {
 
-    // const sessions = [
-    //     {
-    //         id: 1,
-    //         name: 'Session 1',
-    //         status: 'PENDING',
-    //         lastModified: new Date("2021-09-01T10:00:00Z"),
-    //     },
-    //     {
-    //         id: 2,
-    //         name: 'Session 2',
-    //         status: 'ACTIVE',
-    //         lastModified: new Date("2021-09-01T11:00:00Z"),
-    //     }
-    // ];
+     const toDateTimeFormat = (date) => {
+        const dateTime = new Date(date);
+        const year = dateTime.getFullYear();
+        const month = dateTime.getMonth() + 1;
+        const day = dateTime.getDate();
+        const hours = dateTime.getHours();
+        const minutes = dateTime.getMinutes();
+        const seconds = dateTime.getSeconds();
+        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+     };
 
     const apiResponseStatusConstants = {
         intial: 'INITIAL',
@@ -32,13 +28,7 @@ const ViewStatus = () => {
         failure: 'FAILURE',
     }
 
-    const headerDetails = {
-        id : 1,
-        name: 'Title',
-        status: 'Status',
-        dateCreated: 'Created At'
-    }
-
+  
     const [apiResponse, setApiResponse] = useState({
         apiResponseStatus : null,
         sessions: null,
@@ -52,7 +42,7 @@ const ViewStatus = () => {
                 apiResponseStatus: apiResponseStatusConstants.intial
             }));
             try {
-                const jwtToken = Cookies.get('jwt_token');
+            const jwtToken = Cookies.get('jwt_token');
             const url = 'http://localhost:8082/api/abstract';
             const options = {
                 method: 'GET',
@@ -61,9 +51,9 @@ const ViewStatus = () => {
                 }
             }
             const response = await fetch(url, options);
-            const data = await response.json();
-            console.log(data);
             if(response.ok) {
+                const data = await response.json();
+                console.log(data);
                 alert('Sessions fetched successfully');
                 setApiResponse({
                     apiResponseStatus: apiResponseStatusConstants.sucess,
@@ -80,7 +70,8 @@ const ViewStatus = () => {
                 alert('Error fetching sessions');
                 return;
             }
-            } catch (error) {
+            } 
+            catch (error) {
                 setApiResponse({
                     apiResponseStatus: apiResponseStatusConstants.failure,
                     sessions: null,
@@ -104,23 +95,27 @@ const ViewStatus = () => {
         return (
             <div className="view-status-container">
                 <h1 className="view-status-main-heading text-center m-5">View Status</h1>
-                <ul className="view-status-menu">
-                    <li className="view-status-menu-item" key={headerDetails.id}>
-                        <p className='view-status-titleH'>{headerDetails.name}</p>
-                        <p className='view-status-statusH'>{headerDetails.status}</p>
-                        <p className='view-status-last-modifiedH'>{headerDetails.dateCreated.toLocaleString()}</p>
-                    </li>
-                    {
-                        apiResponse.sessions.map((session) => <ViewStatusCard id = {session.id} sessionDetails = {session}/>)
-                    }
-                </ul>    
+                <div>
+                    <table className='table-container'>
+                        <tr>
+                            <th>Title</th>
+                            <th>Status</th>
+                            <th>Created At</th>
+                        </tr>
+                        {apiResponse.sessions.map(session => (
+                             <tr key={session.id}>
+                                <td>{session.title}</td>
+                                <td>Pending</td>
+                                <td>{toDateTimeFormat(session.date)}</td>
+                            </tr>
+                        ))}
+                    </table>
+                </div>
             </div>
         );
     }
 
-    const renderViewStatusFailureView = () => {
-        return (<ViewApiFailureView/>);
-    }
+    const renderViewStatusFailureView = () => <ViewApiFailureView/>;
 
 
 

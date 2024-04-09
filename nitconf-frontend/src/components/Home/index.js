@@ -46,8 +46,8 @@ const Home = () => {
         },
       };
       const response = await fetch(url, options);
-      const data = await response.json();
       if (response.ok === true) {
+        const data = await response.json();
         localStorage.setItem("username", data.firstName + " " + data.lastName);
         setApiResponse(prevApiResponse => ({
           ...prevApiResponse,
@@ -58,7 +58,7 @@ const Home = () => {
         setApiResponse(prevApiResponse => ({
           ...prevApiResponse,
           apiResponseStatus: apiResponseStatusConstants.failure,
-          errorMsg: data.error,
+          errorMsg: "Failed to fetch the username. Please try again later.",
         }));
       }
       } catch (error) {
@@ -86,7 +86,7 @@ const Home = () => {
     return (
       <div className="home-container">
         <div className="home-content">
-          <h1 className="home-heading"> Welcome {username} </h1>
+          <h1 className="text-amber-700 home-heading"> Welcome {username} </h1>
           <img
             src="https://assets.ccbp.in/frontend/react-js/nxt-trendz-home-img.png"
             alt="clothes that get you noticed"
@@ -113,11 +113,7 @@ const Home = () => {
     );
   }
 
-  const renderHomeFailureView = () => {
-    return (
-      <ViewApiFailureView />
-    );
-  }
+  const renderHomeFailureView = () =>  <ViewApiFailureView />;
 
 
 

@@ -17,7 +17,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.ResponseEntity;
 
-import com.nitconfbackend.nitconf.models.Session;
+import com.nitconfbackend.nitconf.models.ConferencePaper;
 import com.nitconfbackend.nitconf.models.Tag;
 import com.nitconfbackend.nitconf.repositories.TagsRepository;
 import com.nitconfbackend.nitconf.types.TagRequest;
@@ -45,36 +45,34 @@ public class TagControllerTest {
         String id = "1234";
         Tag tag = new Tag();
         tag.setId(id);
-        List<Session> sessions = new ArrayList<>();
-        Session session1 = new Session();
-        Session session2 = new Session();
+        List<ConferencePaper> sessions = new ArrayList<>();
+        ConferencePaper session1 = new ConferencePaper();
+        ConferencePaper session2 = new ConferencePaper();
         sessions.add(session1);
         sessions.add(session2);
-        tag.setSessions(sessions);
+        tag.setConferencePapers(sessions);
 
         when(tagsRepository.findById(id)).thenReturn(Optional.of(tag));
 
-        ResponseEntity<List<Session>> responseEntity = tagController.FindSessions(id);
+        ResponseEntity<List<ConferencePaper>> responseEntity = tagController.FindSessions(id);
 
         assertEquals(sessions, responseEntity.getBody());
     }
 
     @Test
     public void testFindSessions_notExist() {
-        String title = "TestTag";
-        String title1 = "NonExistent";
+        String title = "Machine Learning";
+        String invalid_title = "Invalid Title";
         Tag tag = new Tag();
         tag.setTitle(title);
-        List<Session> sessions = new ArrayList<>();
-        Session session1 = new Session();
-        Session session2 = new Session();
+        List<ConferencePaper> sessions = new ArrayList<>();
+        ConferencePaper session1 = new ConferencePaper();
         sessions.add(session1);
-        sessions.add(session2);
-        tag.setSessions(sessions);
+        tag.setConferencePapers(sessions);
 
-        when(tagsRepository.findByTitle(title1)).thenReturn(Optional.empty());
+        when(tagsRepository.findByTitle(invalid_title)).thenReturn(Optional.empty());
         assertThrows(Exception.class, () -> {
-            tagController.FindSessions(title1);
+            tagController.FindSessions(invalid_title);
         });
 
     }
@@ -88,9 +86,9 @@ public class TagControllerTest {
  
         when(tagsRepository.save(any(Tag.class))).thenReturn(newTag);
 
-        Tag responseEntityTag = tagsRepository.save(newTag);
+        ResponseEntity<Tag> responseEntity = tagController.newtag(tagRequest);
 
-        assertEquals(newTag, responseEntityTag);
+        assertEquals(newTag, responseEntity.getBody());
     }
 
     @Test
@@ -103,9 +101,9 @@ public class TagControllerTest {
 
         when(tagsRepository.findAll()).thenReturn(tags);
 
-        List<Tag> responseEntity = tagsRepository.findAll();
+        ResponseEntity<List<Tag>> responseEntity = tagController.FindAll();
 
-        assertEquals(tags, responseEntity);
+        assertEquals(tags, responseEntity.getBody());
     }
 
 

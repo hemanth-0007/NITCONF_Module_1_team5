@@ -61,7 +61,7 @@ public class User implements UserDetails {
      */
     @JsonIgnore
     @DBRef
-    public List<Session> sessions;
+    public List<ConferencePaper> conferencePapers;
 
      
     /**

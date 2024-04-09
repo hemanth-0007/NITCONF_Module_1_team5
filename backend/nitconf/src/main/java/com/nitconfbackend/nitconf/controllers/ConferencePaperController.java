@@ -17,17 +17,17 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.nitconfbackend.nitconf.models.DocumentVersion;
-import com.nitconfbackend.nitconf.models.Session;
+import com.nitconfbackend.nitconf.models.ConferencePaper;
 import com.nitconfbackend.nitconf.models.Tag;
 import com.nitconfbackend.nitconf.models.User;
 import com.nitconfbackend.nitconf.models.Status;
 
 import com.nitconfbackend.nitconf.repositories.DocumentVersionRepository;
-import com.nitconfbackend.nitconf.repositories.SessionRepository;
+import com.nitconfbackend.nitconf.repositories.ConferencePaperRepository;
 import com.nitconfbackend.nitconf.repositories.TagsRepository;
 import com.nitconfbackend.nitconf.repositories.UserRepository;
 import com.nitconfbackend.nitconf.service.DocumentUtility;
-import com.nitconfbackend.nitconf.types.SessionRequest;
+import com.nitconfbackend.nitconf.types.ConferencePaperRequest;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
@@ -40,12 +40,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 @RestController
 @RequestMapping("/api/abstract")
 @SecurityRequirement(name = "bearerAuth")
-public class AbstractController {
+public class ConferencePaperController {
     @Autowired
     private UserRepository userRepo;
 
     @Autowired
-    private SessionRepository sessionRepo;
+    private ConferencePaperRepository conferencePaperRepository;
 
     @Autowired
     private DocumentVersionRepository docRepo;
@@ -56,67 +56,62 @@ public class AbstractController {
     @Autowired
     private TagsRepository tagsRepo;
 
-  
     @GetMapping("")
-    public ResponseEntity<List<Session>> getAllSessions() {
+    public ResponseEntity<List<ConferencePaper>> getAllConferencePapers() {
 
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User currentUser = userRepo.findByEmail(email).orElseThrow();
-
-        List<Session> sessions = currentUser.getSessions();
-        return ResponseEntity.ok(sessions);
+        List<ConferencePaper> conferencePapers = currentUser.getConferencePapers();
+        if (conferencePapers == null)
+            return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(conferencePapers);
     }
 
     @PostMapping("")
-    public ResponseEntity<Session> newSession(@RequestBody SessionRequest entity) {
-        if (entity.title == null || entity.description == null 
-                || entity.status == null || entity.tags == null){
-            System.out.println("Entity is null");       
+    public ResponseEntity<ConferencePaper> newConferencePaper(@RequestBody ConferencePaperRequest entity) {
+        if (entity == null)
             return ResponseEntity.badRequest().build();
-            }
-        System.out.println("Entity is not null");
+        if (entity.title == null || entity.description == null
+                || entity.status == null || entity.tags == null)
+            return ResponseEntity.badRequest().build();
 
         List<Tag> tags = new ArrayList<Tag>();
         entity.tags.forEach(tag -> {
-            System.out.println("Tag: " + tag);
             if (tag != null) {
-                Tag newTag = tagsRepo.findByTitle(tag).orElseThrow();
+                Tag newTag = tagsRepo.findByTitle(tag.toString()).orElseThrow();
                 tags.add(newTag);
             }
         });
 
-        Session session = new Session(
+        ConferencePaper paper = new ConferencePaper(
                 entity.title,
                 entity.description,
                 entity.status,
-                tags
-                );
+                tags);
 
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User currentUser = userRepo.findByEmail(email).orElseThrow();
-        // session.setUser(currentUser);
+        conferencePaperRepository.save(paper);
 
-        sessionRepo.save(session);
-
-        currentUser.getSessions().add(session);
-        System.out.println("Current user sessions: " + currentUser.getSessions());
+        currentUser.getConferencePapers().add(paper);
         userRepo.save(currentUser);
         tags.forEach(tag -> {
-            tag.getSessions().add(session);
+            tag.getConferencePapers().add(paper);
             tagsRepo.save(tag);
         });
 
-        return ResponseEntity.ok(session);
+        return ResponseEntity.ok(paper);
     }
-  
+
     @PutMapping("/{id}")
-    public ResponseEntity<Session> updateSession(@PathVariable String id, @RequestBody SessionRequest entity) {
-        if (id == null)
+    public ResponseEntity<ConferencePaper> updateConferencePaper(@PathVariable String id,
+            @RequestBody ConferencePaperRequest entity) {
+        if (id == null || entity == null)
             return ResponseEntity.notFound().build();
-        if (entity.title == null || entity.description == null  
+        if (entity.title == null || entity.description == null
                 || entity.status == null || entity.tags == null)
             return ResponseEntity.badRequest().build();
-        Session session = sessionRepo.findById(id).orElseThrow();
+        ConferencePaper conferencePaper = conferencePaperRepository.findById(id).orElseThrow();
 
         List<Tag> tags = new ArrayList<Tag>();
         entity.tags.forEach(tag -> {
@@ -126,23 +121,21 @@ public class AbstractController {
             }
         });
 
-        session.setTitle(entity.title);
-        session.setDescription(entity.description);
-        
-        session.setStatus(entity.status);
-        session.setTags(tags);
+        conferencePaper.setTitle(entity.title);
+        conferencePaper.setDescription(entity.description);
+        conferencePaper.setStatus(entity.status);
+        conferencePaper.setTags(tags);
 
-        sessionRepo.save(session);
+        conferencePaperRepository.save(conferencePaper);
 
-        return ResponseEntity.ok(session);
+        return ResponseEntity.ok(conferencePaper);
     }
 
-  
     @PutMapping("/doc/{id}")
     public ResponseEntity<?> uploadPdf(@PathVariable String id, @RequestParam("file") MultipartFile file) {
-        if (id == null)
-            return ResponseEntity.notFound().build();
-        Session session = sessionRepo.findById(id).orElseThrow();
+        if (id == null || file == null)
+            return ResponseEntity.badRequest().build();
+        ConferencePaper session = conferencePaperRepository.findById(id).orElseThrow();
         try {
             byte[] data = documentUtility.pdfToByte(file);
             List<DocumentVersion> allDocs = session.getDocumentVersions();
@@ -156,8 +149,9 @@ public class AbstractController {
             );
             docRepo.save(newDoc);
             session.getDocumentVersions().add(newDoc);
-            sessionRepo.save(session);
-        } catch (Exception e) {
+            conferencePaperRepository.save(session);
+        } 
+        catch (Exception e) {
             System.err.println(e.getMessage());
             return ResponseEntity.badRequest().build();
         }
@@ -165,12 +159,11 @@ public class AbstractController {
         return ResponseEntity.ok().build();
     }
 
- 
     @GetMapping("/doc/{id}")
-    public ResponseEntity<Resource> getDocument(@PathVariable String id) {
+    public ResponseEntity<Resource> getDocumentByConferencePaperId(@PathVariable String id) {
         if (id == null)
             return ResponseEntity.notFound().build();
-        Session session = sessionRepo.findById(id).orElseThrow();
+        ConferencePaper session = conferencePaperRepository.findById(id).orElseThrow();
         List<DocumentVersion> allDocs = session.getDocumentVersions();
         ByteArrayResource resource = documentUtility.downloadFile(allDocs);
         if (resource == null)
@@ -182,52 +175,45 @@ public class AbstractController {
                 .body(resource);
     }
 
- 
     @GetMapping("/{id}")
-    public ResponseEntity<Session> getSession(@PathVariable String id) {
+    public ResponseEntity<ConferencePaper> getConferencePaper(@PathVariable String id) {
         if (id == null)
             return ResponseEntity.notFound().build();
-        Session session = sessionRepo.findById(id).orElseThrow();
+        ConferencePaper session = conferencePaperRepository.findById(id).orElseThrow();
         return ResponseEntity.ok(session);
-    }
-
-  
-    @PutMapping("/status/accepted/{id}")
-    public ResponseEntity<String> updateStatusToAccepted(@PathVariable String id) {
-        if (id == null)
-            return ResponseEntity.notFound().build();
-        Session session = sessionRepo.findById(id).orElseThrow();
-        session.setStatus(Status.ACCEPTED);
-        return ResponseEntity.ok("UPDATED STATUS TO ACCEPTED");
-    }
-
-   
-    @PutMapping("/status/rejected/{id}")
-    public ResponseEntity<String> updateStatusToRejected(@PathVariable String id) {
-        if (id == null)
-            return ResponseEntity.notFound().build();
-        Session session = sessionRepo.findById(id).orElseThrow();
-        session.setStatus(Status.REJECTED);
-        return ResponseEntity.ok("UPDATED STATUS TO REJECTED");
     }
 
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteSession(@PathVariable String id) {
+    public ResponseEntity<String> deleteConferencePaper(@PathVariable String id) {
         if (id == null)
-            return ResponseEntity.notFound().build();
-        Session session = sessionRepo.findById(id).orElseThrow();
-        if (session != null){
-            sessionRepo.delete(session);
-            List<DocumentVersion> allDocs = session.getDocumentVersions();
-            if(allDocs != null && !allDocs.isEmpty())
-                allDocs.forEach(doc -> {
-                    if (doc != null)
-                        docRepo.delete(doc);
-                });
-        }
-        
-        return ResponseEntity.ok("DELETED SESSION");
+            return ResponseEntity.badRequest().build();
+
+        ConferencePaper conferencePaper = conferencePaperRepository.findById(id).orElseThrow();
+
+        List<DocumentVersion> allDocs = conferencePaper.getDocumentVersions();
+        if (allDocs != null && !allDocs.isEmpty())
+            allDocs.forEach(doc -> {
+                if (doc != null)
+                    docRepo.delete(doc);
+            });
+        List<Tag> relatedTags = conferencePaper.getTags();
+        if (relatedTags != null && !relatedTags.isEmpty())
+            relatedTags.forEach(tag -> {
+                if (tag != null) {
+                    tag.getConferencePapers().remove(conferencePaper);
+                    tagsRepo.save(tag);
+                }
+            });
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User currentUser = userRepo.findByEmail(email).orElseThrow();
+        // System.out.println(currentUser.getConferencePapers());
+        currentUser.getConferencePapers().remove(conferencePaper);
+        // System.out.println(currentUser.getConferencePapers());
+        userRepo.save(currentUser);
+        conferencePaperRepository.delete(conferencePaper);
+
+        return ResponseEntity.ok("DELETED PAPER");
     }
 
 }
