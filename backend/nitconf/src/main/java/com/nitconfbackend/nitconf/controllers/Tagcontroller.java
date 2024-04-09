@@ -9,17 +9,19 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.nitconfbackend.nitconf.models.Session;
+import com.nitconfbackend.nitconf.models.ConferencePaper;
 import com.nitconfbackend.nitconf.models.Tag;
 import com.nitconfbackend.nitconf.repositories.TagsRepository;
 import com.nitconfbackend.nitconf.service.TagService;
 import com.nitconfbackend.nitconf.types.TagRequest;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tags;
+
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PutMapping;
+
 
 /**
  * Controller class for managing tags related to sessions.
@@ -42,11 +44,11 @@ public class Tagcontroller {
      * @return ResponseEntity containing a list of sessions related to the specified tag.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<List<Session>> FindSessions(@PathVariable String id) {
+    public ResponseEntity<List<ConferencePaper>> FindSessions(@PathVariable String id) {
         if (id == null)
             return ResponseEntity.badRequest().build();
         Tag tag = repository.findById(id).orElseThrow();
-        List<Session> relatedSessions = tag.getSessions();
+        List<ConferencePaper> relatedSessions = tag.getConferencePapers();
 
         return ResponseEntity.ok(relatedSessions);
     }
@@ -59,7 +61,11 @@ public class Tagcontroller {
      */
     @GetMapping("/findall")
     public ResponseEntity<List<Tag>> FindAll() {
-        return ResponseEntity.ok(tagService.getAllTags());
+        List<Tag> tags = repository.findAll();
+        if(tags == null){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(tags);
     }
 
     /**
@@ -70,7 +76,12 @@ public class Tagcontroller {
      */
     @PostMapping("/newtag")
     public ResponseEntity<Tag> newtag(@RequestBody TagRequest entity) {
-        return ResponseEntity.ok(tagService.CreateNewTag(entity.title));
+        Tag newtag = new Tag(entity.title);
+        repository.save(newtag);
+        return ResponseEntity.ok(newtag);
     }
+
+
+
 
 }

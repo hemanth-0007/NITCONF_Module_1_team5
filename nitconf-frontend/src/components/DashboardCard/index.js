@@ -1,16 +1,17 @@
 import "./index.css";
-import { Link } from "react-router-dom";
 import { MdDelete } from "react-icons/md";
 import { useState } from "react";
-import { Button, Modal } from 'react-bootstrap';
+import { Button, Modal } from "react-bootstrap";
 import { useHistory } from "react-router-dom";
 
 const DashboardCard = (props) => {
-  const {id, cardDetails, onDeleteSession } = props;
-  const {  title } = cardDetails;
-  const imageUrl = "https://res.cloudinary.com/drvnhpatd/image/upload/v1706379166/vdlrgp7zuehwf8zlakau.jpg";
+  // useHistory hook
   const history = useHistory();
-   
+  // data from props
+  const { id, cardDetails, onDeleteSession } = props;
+  const { title } = cardDetails;
+  const imageUrl =
+    "https://res.cloudinary.com/drvnhpatd/image/upload/v1706379166/vdlrgp7zuehwf8zlakau.jpg";
 
   const [show, setShow] = useState(false);
 
@@ -23,46 +24,54 @@ const DashboardCard = (props) => {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  const onClickNavigate = () => {
-    history.push(`/dashboard/${id}`);
-  }
+  const onClickNavigate = () => history.push(`/dashboard/${id}`);
 
   const renderDeleteConfirmationModal = () => {
     return (
       <>
-        {/* <Button variant="danger" onClick={handleShow}>
-          Delete
-        </Button> */}
-  
         <Modal show={show} onHide={handleClose}>
           <Modal.Header closeButton>
             <Modal.Title>Confirm Delete</Modal.Title>
           </Modal.Header>
           <Modal.Body>Are you sure you want to delete?</Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={handleClose}>
+            <Button
+              className="bg-slate-700"
+              variant="secondary"
+              onClick={handleClose}
+            >
               Cancel
             </Button>
-            <Button variant="primary" onClick={handleDelete}>
+            <Button
+              className="bg-red-600"
+              variant="danger"
+              onClick={handleDelete}
+            >
               Delete
             </Button>
           </Modal.Footer>
         </Modal>
       </>
     );
-  }
+  };
   return (
-      <>
-        <li className="card">
-          <img src={imageUrl} alt={title} onClick = {onClickNavigate} className="card-image" />
-          <div className="card-content">
-            <h2 onClick = {onClickNavigate} className="card-title">{title}</h2>
-            {/* <p className="card-description">{description}</p> */}
-            <MdDelete className="dashboard-card-delete-btn" onClick={handleShow}/>
-          </div>
-        </li>
-        {renderDeleteConfirmationModal()}
-      </>
+    <>
+      <li className="card m-3">
+        <img
+          src={imageUrl}
+          alt={title}
+          onClick={onClickNavigate}
+          className="card-image"
+        />
+        <div className="flex flex-col justify-center items-center">
+          <h2 onClick={onClickNavigate} className="card-title">
+            {title}
+          </h2>
+          <MdDelete className="size-5" onClick={handleShow} />
+        </div>
+      </li>
+      {renderDeleteConfirmationModal()}
+    </>
   );
 };
 

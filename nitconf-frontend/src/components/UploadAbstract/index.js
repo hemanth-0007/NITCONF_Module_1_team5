@@ -19,6 +19,7 @@ const UploadAbstract = () => {
     description: "",
     tags: [],
     selectedTag: "",
+    newTag: "",
     file: null,
   });
 
@@ -26,33 +27,12 @@ const UploadAbstract = () => {
   const [titleError, setTitleError] = useState("");
   const [descriptionError, setDescriptionError] = useState("");
   const [formError, setFormError] = useState("");
-
-  //sample tags list
-  // const tagsList = [
-  //   "Data Structures and Algorithms",
-  //   "Operating Systems",
-  //   "Database Management Systems",
-  //   "Computer Networks",
-  //   "Artificial Intelligence",
-  //   "Machine Learning",
-  //   "Web Development",
-  //   "Mobile Application Development",
-  //   "Geotechnical Engineering",
-  //   "Transportation Engineering",
-  // ];
+  const [isCreateTag, setIsCreateTag] = useState(false);
+ 
 
   // useEffect hook to fetch tags list from backend
   useEffect(() => {
     const getTagsList = async () => {
-      // const localStorageTagsList = JSON.parse(localStorage.getItem("tagsList"));
-      // if (localStorageTagsList !== null) {
-      //   setTagsList(localStorageTagsList);
-      //   setFormData((prevFormData) => ({
-      //     ...prevFormData,
-      //     selectedTag: localStorageTagsList[0].title,
-      //   }));
-      //   return;
-      // }
       const jwtToken = Cookies.get("jwt_token");
       const url = "http://localhost:8082/api/tags/findall";
       const options = {
@@ -220,6 +200,44 @@ const UploadAbstract = () => {
     setFormData((prevFormData) => ({ ...prevFormData, tags: updatedTags }));
   };
 
+  const onClickCreateTag = () => setIsCreateTag(prev => !prev);
+
+  const onClickNewTagApi = async () => {
+    const { newTag } = formData;
+    setTagsList(prevTagsList => [...prevTagsList, { id: uuidv4(), title: newTag }]);
+    const jwtToken = Cookies.get("jwt_token");
+    const url = "http://localhost:8082/api/tags/newtag";
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${jwtToken}`,
+      },
+      body: JSON.stringify({ title: newTag }),
+    };
+    try {
+      const response = await fetch(url, options);
+      console.log(response);
+      const data = await response.json();
+      console.log(data);
+      if (response.ok) {
+        alert("Tag created successfully");
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          newTag: ""
+        }));
+        return;
+      } else {
+        alert("Error in creating the tag");
+        return;
+      }
+    } 
+    catch (error) {
+      console.log("err msg : ", error.message);
+    }
+
+  };
+
   const renderTitleField = () => {
     const { title } = formData;
     return (
@@ -276,14 +294,43 @@ const UploadAbstract = () => {
     );
   };
 
+
+  const renderCreateTagField = () => {
+    const { newTag } = formData;
+    return (
+     
+      <div className="create-tag-container">
+        <div className="mt-3">
+            {/* <label className="input-label" htmlFor="create-tag">
+              New Tag
+            </label> */}
+            <input
+              type="text"
+              id="create-tag"
+              className="username-input-field"
+              value={newTag}
+              onChange= { e => setFormData( prevFormData => ({ ...prevFormData, newTag: e.target.value })) }
+              placeholder="New Tag"
+            />
+        </div>
+        <button
+                type="button"
+                className="btn btn-primary mt-3 ml-3 font-bold bg-sky-600"
+                onClick={onClickNewTagApi}
+        >
+          Create Tag
+        </button>
+      </div>
+    );
+  }
+
   
 
   return (
     <>
       <Header />
       <form className="my-form" onSubmit={handleSubmit}>
-        <h1 className="mb-3 mt-3 fw-600 fs-2">Submit Paper </h1>
-
+        <h1 className="fw-900 text-3xl font-bold cursor-not-allowed">Submit Paper</h1>
         <div className="input-container">
           {renderTitleField()}
           {titleError && <p className="text-danger">{titleError}</p>}
@@ -318,13 +365,23 @@ const UploadAbstract = () => {
             <p>Loading the Tags</p>
           )}
 
-          <button
-            type="button"
-            className="btn btn-outline-primary mt-3"
-            onClick={onClickAddTag}
-          >
-            Add
-          </button>
+         <div className="flex flex-row justify-center">
+              <button
+                type="button"
+                className="btn btn-outline-primary mt-3"
+                onClick={onClickAddTag}
+              >
+                Add
+              </button>
+              <button
+                type="button"
+                className="btn btn-outline-primary mt-3 ml-3"
+                onClick={onClickCreateTag}
+              >
+                {isCreateTag ? "Close" : "Create Tag"}
+              </button>
+         </div>
+         {isCreateTag && (renderCreateTagField())}
         </div>
         {/* displaying the selected tags */}
         <ul className="tags-list-group">
@@ -333,11 +390,11 @@ const UploadAbstract = () => {
           ))}
         </ul>
 
-        <button type="submit" className="submit-btn btn btn-primary">
+        <button type="submit" className="btn btn-primary bg-sky-600 font-bold ">
           {" "}
           Submit{" "}
         </button>
-        <p>* feilds are compulsory </p>
+        <p className="text-rose-700">* feilds are compulsory </p>
         {formError && <p className="error-msg">{formError}</p>}
       </form>
     </>

@@ -13,17 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 // import com.nitconfbackend.nitconf.models.Role;
 import com.nitconfbackend.nitconf.models.User;
 import com.nitconfbackend.nitconf.repositories.UserRepository;
-import com.nitconfbackend.nitconf.types.ProfileRequest;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-
-
-
-
-
 
 /**
  * Controller class for managing user profile.
@@ -45,5 +36,15 @@ public class ProfileController {
         User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return ResponseEntity.ok(user);   
     }
+
+
+    @GetMapping("/{id}")
+    public ResponseEntity<User> getUser(@PathVariable @NonNull String id) {
+        User user = userRepo.findById(id).orElseThrow();        
+        if(user == null)
+            return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(user);
+    }
+    
     
 }

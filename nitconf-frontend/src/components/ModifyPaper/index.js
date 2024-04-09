@@ -62,9 +62,9 @@ const ModifyPaper = (props) => {
 
   const renderPdfField = () => {
     return (
-      <>
-        <label className="input-label" htmlFor="pdf-file">
-          Upload PDF*:
+      <div>
+        <label className="input-label mr-4" htmlFor="pdf-file">
+          Upload PDF :{" "}
         </label>
         <input
           type="file"
@@ -73,8 +73,9 @@ const ModifyPaper = (props) => {
           className="username-input-field"
           onChange={handleFileChange}
           placeholder="Upload PDF"
+          required = "required"
         />
-      </>
+      </div>
     );
   };
 
@@ -88,11 +89,13 @@ const ModifyPaper = (props) => {
 
   return (
     <form onSubmit={onHandleSubmit} className="modify-paper-container">
-      <h1 className="modify-paper-heading">Modify Paper</h1>
-      {renderPdfField()}
-      <Button variant="primary" type="submit" className="submit-button">
-        Submit
-      </Button>
+      <h3 className="text-2xl font-semibold pt-4">Modify Paper</h3>
+      <div className="flex flex-col justify-center items-start">
+        {renderPdfField()}
+        <Button variant="primary" type="submit" className="bg-blue-600 font-semibold mt-3">
+          Submit
+        </Button>
+      </div>
       {renderLoader()}
       <p>{pdfError}</p>
     </form>

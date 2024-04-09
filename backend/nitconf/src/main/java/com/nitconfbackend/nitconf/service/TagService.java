@@ -1,6 +1,6 @@
 package com.nitconfbackend.nitconf.service;
 
-import com.nitconfbackend.nitconf.models.Session;
+import com.nitconfbackend.nitconf.models.ConferencePaper;
 import com.nitconfbackend.nitconf.models.Tag;
 import com.nitconfbackend.nitconf.repositories.TagsRepository;
 
@@ -50,17 +50,17 @@ public class TagService {
      * @return List of sessions related to the specified tag.
      * @throws RuntimeException if the tag with the given title is not found.
      */
-    public List<Session> findSessions(String id) {
+    public List<ConferencePaper> findSessions(String id) {
         Tag tag = tagsRepository.findById(id).orElseThrow(() -> new RuntimeException("Tag not found"));
-        System.out.println("The sessions are : " + tag.getSessions());
-        List<Session> sessions = tag.getSessions();
+        System.out.println("The sessions are : " + tag.getConferencePapers());
+        List<ConferencePaper> sessions = tag.getConferencePapers();
         System.out.println(sessions.size());
         return sessions;
     }
 
-    public List<Session> findSessionByTitle(String title) {
+    public List<ConferencePaper> findSessionByTitle(String title) {
         Tag tag = tagsRepository.findByTitle(title).orElseThrow(() -> new RuntimeException("Tag not found"));
-        List<Session> sessions = tag.getSessions();
+        List<ConferencePaper> sessions = tag.getConferencePapers();
         System.out.println(sessions.size());
         return sessions;
     }

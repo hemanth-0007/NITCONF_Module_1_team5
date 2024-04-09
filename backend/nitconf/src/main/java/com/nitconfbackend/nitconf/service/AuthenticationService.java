@@ -8,7 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 // import com.nitconfbackend.nitconf.models.Role;
-import com.nitconfbackend.nitconf.models.Session;
+import com.nitconfbackend.nitconf.models.ConferencePaper;
 import com.nitconfbackend.nitconf.models.User;
 import com.nitconfbackend.nitconf.repositories.UserRepository;
 import com.nitconfbackend.nitconf.types.AuthenticationRequest;
@@ -50,11 +50,11 @@ public class AuthenticationService {
                 .lastName(request.getLastName())
                 .email(request.getEmail())
                 .password(encoder.encode(request.getPassword()))
-                .sessions(new ArrayList<Session>())
+                .conferencePapers(new ArrayList<ConferencePaper>())
                 .isVerified(true)
                 .build();
         if (user != null) {
-            repository.save(user);
+            User savedUser = repository.save(user);
             var jwtToken = jwtService.generateToken(user);
             return AuthenticationResponse.builder()
                     .token(jwtToken)

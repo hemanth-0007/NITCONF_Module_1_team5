@@ -3,9 +3,7 @@ package com.nitconfbackend.nitconf.controllers;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,30 +30,27 @@ public class AuthController {
 
     @Autowired
     private UserRepository userRepo;
+
     /**
      * Registers a new user.
      *
      * @param user The user details to be registered.
      * @return ResponseEntity containing the authentication response.
-     * @throws IllegalArgumentException if the provided user object is null or if any required fields are missing.
+     * @throws IllegalArgumentException if the provided user object is null or if
+     *                                  any required fields are missing.
      */
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> registerUser(@RequestBody RegisterRequest user) {
-        if(user == null){
-            System.out.println("User is null");
+        if (user == null)
             return ResponseEntity.badRequest().build();
-        }
-        else{
-            // System.out.println("User is not null");
-        }
 
-        if (user.getFirstName() == null || user.getLastName() == null || user.getEmail() == null || user.getPassword() == null )
+        if (user.getFirstName() == null || user.getLastName() == null || user.getEmail() == null
+                || user.getPassword() == null)
             return ResponseEntity.badRequest().build();
         String email = user.getEmail();
         Optional<User> userExists = userRepo.findByEmail(email);
-        if (userExists.isPresent()){
+        if (userExists.isPresent()) {
             String errorMessage = "User with email " + email + " already exists";
-            System.out.println(errorMessage);
             AuthenticationResponse response = AuthenticationResponse.builder().msg(errorMessage).build();
             return ResponseEntity.badRequest().body(response);
         }
@@ -67,17 +62,22 @@ public class AuthController {
      *
      * @param user The user credentials for login.
      * @return ResponseEntity containing the authentication response.
-     * @throws IllegalArgumentException if the provided user object is null or if any required fields are missing.
+     * @throws IllegalArgumentException if the provided user object is null or if
+     *                                  any required fields are missing.
      */
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> login(@RequestBody AuthenticationRequest user) {
-        
-        if (user.getEmail() == null || user.getPassword() == null){
+
+        if (user == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        if (user.getEmail() == null || user.getPassword() == null) {
             System.out.println("User is null");
             return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok(service.login(user));
+        AuthenticationResponse authenticationResponse = service.login(user);
+        return ResponseEntity.ok(authenticationResponse);
     }
 
 }
-

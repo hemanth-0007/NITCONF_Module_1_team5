@@ -19,6 +19,9 @@ const Register = (props) => {
     setFormData((prevFormData) => ({ ...prevFormData, [stateName]: value }));
   };
 
+
+  
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
@@ -33,6 +36,15 @@ const Register = (props) => {
       ) {
         setFormData({
           errorMsg: "Please enter all the details",
+          showSubmitError: true,
+        });
+        return;
+      }
+
+      const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+      if (!emailRegex.test(email)) {
+        setFormData({
+          errorMsg: "Please enter a valid email",
           showSubmitError: true,
         });
         return;

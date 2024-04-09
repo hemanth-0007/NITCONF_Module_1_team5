@@ -25,21 +25,21 @@ public class TagServiceTest {
 
 	@Test
 	void testCreateNewTag() {
-		Tag Tag = new Tag("AI");
-		// When
+		Tag Tag = new Tag("BlockChain");
+		// When stubbing the mock, if the method is called with the given parameters, it will return the given value.
 		given(tagsrepo.save(Tag)).willReturn(Tag);
 		var savedTag = tagService.CreateNewTag(Tag.title);
 		// Then
 		assertThat(savedTag).isNotNull();
-		assertThat(savedTag.getTitle()).isEqualTo("AI");
+		assertThat(savedTag.getTitle()).isEqualTo("BlockChain");
 	}
 
 	@Test
 	void testFindSessions() {
-		Tag Tag = new Tag("AI");
+		Tag Tag = new Tag("ML");
 		// When
-		given(tagsrepo.findByTitle("AI")).willReturn(java.util.Optional.of(Tag));
-		var relatedSessions = tagService.findSessionByTitle("AI");
+		given(tagsrepo.findByTitle("ML")).willReturn(java.util.Optional.of(Tag));
+		var relatedSessions = tagService.findSessionByTitle("ML");
 		// Then
 		assertThat(relatedSessions).isNotNull();
 		assertThat(relatedSessions.size()).isEqualTo(0);

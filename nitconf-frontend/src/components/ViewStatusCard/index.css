@@ -1,7 +1,6 @@
 .view-status-menu-item{
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
     align-items: center;
 
     background-color: white;
@@ -14,6 +13,7 @@
     font-size: 1.5rem;
     /* font-weight: bold; */
     margin: 0 0 0 1rem;
+    /* border: 2px solid black; */
 
 }
 .view-status-status{
@@ -21,7 +21,10 @@
 
     font-size: 1.5rem;
     /* font-weight: bold; */
-    margin: 0 0 0 1rem;
+    /* margin: 0 0 0 1rem; */
+    /* border: 2px solid black; */
+    margin-left: 5rem;
+    margin-right: 0px;
 }
 .view-status-last-modified{
     font-family: "Roboto", sans-serif;
@@ -29,5 +32,6 @@
     font-size: 1.5rem;
     /* font-weight: bold; */
     margin: 0 0 0 1rem;
+    /* border: 2px solid black; */
 
 }

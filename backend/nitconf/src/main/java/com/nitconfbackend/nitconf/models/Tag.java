@@ -40,7 +40,7 @@ public class Tag {
      */
     @DBRef
     @JsonIgnore
-    public List<Session> sessions;
+    public List<ConferencePaper> conferencePapers;
 
     /**
      * Constructs a new tag with the given title.
@@ -48,7 +48,7 @@ public class Tag {
      */
     public Tag(String title) {
         this.title = title;
-        this.sessions= new ArrayList<Session>();
+        this.conferencePapers= new ArrayList<ConferencePaper>();
     }
 }
 

@@ -8,6 +8,8 @@ import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import ViewApiFailureView from "../ViewApiFailureView";
 import ModifyPaper from "../ModifyPaper";
 import { Button } from "react-bootstrap";
+import { v4 as uuidv4 } from "uuid";
+import ReviewCard from "../ReviewCard";
 
 const PaperDetailedView = (props) => {
   const apiStatusConstants = {
@@ -18,25 +20,8 @@ const PaperDetailedView = (props) => {
   };
 
   const [pdfString, setPdfString] = useState("");
-  // get the id from the url path params
-  // const paperId = props.match.params.id;
-
   const { paperId } = useParams();
-  //console.log(paperId);
-
-  // const title = "Sample Title";
-  // const description =
-  //   "This is a sample description. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam convallis purus nec turpis facilisis, nec vestibulum justo luctus.";
-  const deadline = "January 31, 2024";
-  const numReviewers = 3;
-  // const version = 1.1;
-  // const comments = [
-  //   "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-  //   "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.",
-  //   "Donec ac lectus in libero pharetra fermentum.",
-  // ];
-  // const tags = ["tag1", "tag2", "tag3"];
-
+  const deadline = "May 31, 2024";
   const [apiResponse, setApiResponse] = useState({
     apiResponseStatus: apiStatusConstants.initial,
     data: {},
@@ -66,7 +51,7 @@ const PaperDetailedView = (props) => {
         const pdfUrl = URL.createObjectURL(blob);
         console.log(pdfUrl);
         setPdfString(pdfUrl);
-        
+
         // window.open(pdfUrl, '_blank');
         // let base64String;
 
@@ -84,9 +69,10 @@ const PaperDetailedView = (props) => {
     }
   };
 
-  const modifyPaper = () => setisModifyPaper(true);
+  const modifyPaper = () =>
+    setisModifyPaper((prevModifyPaper) => !prevModifyPaper);
 
-  const onClickClose = () => setisModifyPaper(false);
+  const onClickGoBack = () => props.history.goBack();
 
   const handleDownloadPdf = async () => {
     await fetchPdf();
@@ -148,88 +134,97 @@ const PaperDetailedView = (props) => {
 
   const renderPaperLoadingView = () => (
     <div className="loader-container">
-      <Loader type="ThreeDots" color="#00BFFF" height={80} width={80} />
+      <Loader type="Oval" color="#00BFFF" height={100} width={100} />
     </div>
   );
 
-  const renderModifyPaper = () => {
-    return isModifyPaper ? <ModifyPaper id={paperId} /> : null;
-  };
+  const renderModifyPaper = () =>
+    isModifyPaper ? <ModifyPaper id={paperId} /> : null;
 
   const renderPaperSuccessView = () => {
-    const { title, description, date, tags, documentVersions } =
-      apiResponse.data;
-
+    const { title, description, tags, documentVersions } = apiResponse.data;
     const version = documentVersions.length;
-    //const version = documentVersions[documentVersions.length - 1].version;
-    const reviewsList =
-      version > 0 ? documentVersions[version - 1].reviews : [];
+    const reviewsList = [
+      {
+        id: uuidv4(),
+        reviewer: "Reviewer 1",
+        reviewContent: "This is good work will recommend for acceptance",
+      },
+      {
+        id: uuidv4(),
+        reviewer: "Reviewer 2",
+        reviewContent:
+          "There are some issues in the paper. Please correct them.",
+      },
+      {
+        id: uuidv4(),
+        reviewer: "Reviewer 3",
+        reviewContent: "This is a good paper. Will recommend for acceptance.",
+      },
+    ];
 
     return (
-      <div className="component-container">
-        <h1 className="component-title">{title}</h1>
-        <h2>Description</h2>
-        <p className="component-description">{description}</p>
-        <p className="component-deadline">
-          {" "}
-          <span className="font-weight-bold">Deadline</span>: {deadline}
-        </p>
-        <p className="component-version">
-          <span className="font-weight-bold">Version : </span>
-          {version}
-        </p>
-
-        <p className="component-reviewers">
-          <span className="font-weight-bold">
-            Number of Reviewers(Reviewed)
-          </span>
-          : {numReviewers} out of 3
-        </p>
-        <span className="component-tags-heading font-weight-bold">Tags</span>
-        <ul className="tags-list">
-          {tags.map((tag) => (
-            <li key={tag.id} className="component-tag">
-              {tag.title}
-            </li>
-          ))}
-        </ul>
-        <div className="component-comments">
-          <h2>Reviews:</h2>
+      <div className="flex flex-row justify-center">
+        <div className="h-auto p-5 w-2/4 bg-slate-100 rounded-3xl border-4 border-slate-600 m-5 overflow-auto">
+          <h1 className="text-4xl fw-600 font-sans font-semibold mb-2">
+            {title}
+          </h1>
+          <p className="text-xl font-normal font-sans mb-2">{description}</p>
+          <p className="text-xl">
+            {" "}
+            <span className="font-weight-bold">Deadline</span>: {deadline}
+          </p>
+          <p className="component-version">
+            <span className="font-weight-bold">Version : </span>
+            {version}
+          </p>
+          <span className="component-tags-heading font-weight-bold">Tags</span>
+          <ul className="list-none flex flex-row justify-start mb-3">
+            {tags.map((tag) => (
+              <li key={tag.id} className="mr-2 mt-1 text-lg p-1">
+                {tag.title}
+              </li>
+            ))}
+          </ul>
+          <p className="text-xl font-semibold">Reviews</p>
           {reviewsList.length > 0 ? (
-            <ul className="component-comment-item">
+            <ul className="list-none">
               {reviewsList.map((review) => (
-                <li key={review.id}>{review.description}</li>
+                <ReviewCard key={review.id} reviewDetails={review} />
               ))}
             </ul>
           ) : (
-            <p>No reviews yet</p>
+            <p className="">No reviews yet</p>
           )}
+
+          <div className="mt-4">
+            <Button
+              className="bg-blue-600 font-semibold mr-2"
+              type="button"
+              onClick={modifyPaper}
+              variant="primary"
+            >
+              {isModifyPaper ? "Close" : "Modify"}
+            </Button>
+            <Button
+              className="bg-blue-600 font-semibold mr-2"
+              type="button"
+              onClick={handleDownloadPdf}
+              variant="primary"
+            >
+              Download Pdf{" "}
+            </Button>
+            <Button
+              className="bg-blue-600 font-semibold mr-2"
+              type="button"
+              onClick={onClickGoBack}
+              variant="primary"
+            >
+              Go Back{" "}
+            </Button>
+          </div>
+          {renderModifyPaper()}
         </div>
-        <div className="paper-view-btn-container">
-          <button
-            type="button"
-            className="component-button btn btn-primary cursor-pointer font-weight-bold mr-3"
-            onClick={modifyPaper}
-          >
-            Modify Paper{" "}
-          </button>
-          <button
-            type="button"
-            className="component-button btn btn-primary cursor-pointer font-weight-bold"
-            onClick={handleDownloadPdf}
-          >
-            Download Pdf{" "}
-          </button>
-          <Button
-            onClick={onClickClose}
-            variant="primary"
-            type="submit"
-            className="fw-5 ml-3 submit-button"
-          >
-            Close
-          </Button>
-        </div>
-        {renderModifyPaper()}
       </div>
     );
   };
